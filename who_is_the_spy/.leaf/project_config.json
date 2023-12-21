@@ -1,0 +1,1101 @@
+{
+    "name": "who_is_the_spy",
+    "version": "0.1.0",
+    "metadata": {
+        "scene_metadata": {
+            "scene_definition": {
+                "name": "WhoIsTheSpy",
+                "description": "A scene that simulates the Who is the Spy game.",
+                "env_vars": [
+                    {
+                        "name": "key_modality",
+                        "description": "the modality of the key, i.e: text, image, audio, etc.",
+                        "env_var_cls": "KeyModalityEnvVar"
+                    },
+                    {
+                        "name": "num_rounds",
+                        "description": "num rounds to play",
+                        "env_var_cls": "NumRoundsEnvVar"
+                    },
+                    {
+                        "name": "has_blank",
+                        "description": "whether the game has blank",
+                        "env_var_cls": "HasBlankEnvVar"
+                    }
+                ],
+                "roles": [
+                    {
+                        "name": "moderator",
+                        "description": "the one that moderate the game",
+                        "actions": [
+                            {
+                                "name": "registry_players",
+                                "description": "registry players",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "players",
+                                            "annotation": "typing.List[leaf_playground.data.profile.Profile]"
+                                        }
+                                    ],
+                                    "return_annotation": "None",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "init_game",
+                                "description": "initialize game",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "introduce_game_rule",
+                                "description": "introduce game rules",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "announce_game_start",
+                                "description": "announce game start",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "assign_keys",
+                                "description": "assign keys to players",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "player",
+                                            "annotation": "<class 'leaf_playground.data.profile.Profile'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorKeyAssignment'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "ask_for_key_description",
+                                "description": "ask a player to give a key description",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorAskForDescription'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "valid_player_description",
+                                "description": "validate player's description",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "description",
+                                            "annotation": "<class 'who_is_the_spy.scene_definition.PlayerDescription'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorWarning'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "ask_for_role_prediction",
+                                "description": "ask a player to predict other player's role",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorAskForRolePrediction'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "summarize_players_prediction",
+                                "description": "summarize all players' role predictions",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "predictions",
+                                            "annotation": "typing.List[who_is_the_spy.scene_definition.PlayerPrediction]"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "ask_for_vote",
+                                "description": "ask a player to vote",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorAskForVote'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "summarize_player_votes",
+                                "description": "summarize all players' votes",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "votes",
+                                            "annotation": "typing.List[who_is_the_spy.scene_definition.PlayerVote]"
+                                        },
+                                        {
+                                            "name": "focused_players",
+                                            "annotation": "typing.Optional[typing.List[leaf_playground.data.profile.Profile]]"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorVoteSummary'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "check_if_game_over",
+                                "description": "check whether the game is over",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "reset_inner_status",
+                                "description": "reset inner status",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'inspect._empty'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            }
+                        ],
+                        "num_agents_range": [
+                            1,
+                            1
+                        ],
+                        "is_static": true
+                    },
+                    {
+                        "name": "player",
+                        "description": "the one that plays the game",
+                        "actions": [
+                            {
+                                "name": "receive_key",
+                                "description": "receive key",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "key_assignment",
+                                            "annotation": "<class 'who_is_the_spy.scene_definition.ModeratorKeyAssignment'>"
+                                        }
+                                    ],
+                                    "return_annotation": "None",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "describe_key",
+                                "description": "describe key",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "history",
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                        },
+                                        {
+                                            "name": "receivers",
+                                            "annotation": "typing.List[leaf_playground.data.profile.Profile]"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.PlayerDescription'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "predict_role",
+                                "description": "predict role",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "history",
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                        },
+                                        {
+                                            "name": "moderator",
+                                            "annotation": "<class 'leaf_playground.data.profile.Profile'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.PlayerPrediction'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "vote",
+                                "description": "vote",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "history",
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                        },
+                                        {
+                                            "name": "moderator",
+                                            "annotation": "<class 'leaf_playground.data.profile.Profile'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.PlayerVote'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "reset_inner_status",
+                                "description": "reset inner status",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'inspect._empty'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            }
+                        ],
+                        "num_agents_range": [
+                            4,
+                            9
+                        ],
+                        "is_static": false
+                    }
+                ]
+            },
+            "config_schema": {
+                "$defs": {
+                    "AnnounceGameStartActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "AnnounceGameStartActionConfig",
+                        "type": "object"
+                    },
+                    "AskForKeyDescriptionActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "AskForKeyDescriptionActionConfig",
+                        "type": "object"
+                    },
+                    "AskForRolePredictionActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "AskForRolePredictionActionConfig",
+                        "type": "object"
+                    },
+                    "AskForVoteActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "AskForVoteActionConfig",
+                        "type": "object"
+                    },
+                    "AssignKeysActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "AssignKeysActionConfig",
+                        "type": "object"
+                    },
+                    "CheckIfGameOverActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "CheckIfGameOverActionConfig",
+                        "type": "object"
+                    },
+                    "DescribeKeyActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "DescribeKeyActionConfig",
+                        "type": "object"
+                    },
+                    "DynamicObject": {
+                        "properties": {
+                            "obj": {
+                                "title": "Obj",
+                                "type": "string"
+                            },
+                            "module": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Module"
+                            },
+                            "source_file": {
+                                "anyOf": [
+                                    {
+                                        "format": "file-path",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Source File"
+                            }
+                        },
+                        "required": [
+                            "obj"
+                        ],
+                        "title": "DynamicObject",
+                        "type": "object"
+                    },
+                    "HasBlankEnvVarConfig": {
+                        "properties": {
+                            "current_value": {
+                                "default": false,
+                                "title": "Current Value",
+                                "type": "boolean"
+                            }
+                        },
+                        "title": "HasBlankEnvVarConfig",
+                        "type": "object"
+                    },
+                    "InitGameActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "InitGameActionConfig",
+                        "type": "object"
+                    },
+                    "IntroduceGameRuleActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "IntroduceGameRuleActionConfig",
+                        "type": "object"
+                    },
+                    "KeyModalities": {
+                        "const": "text",
+                        "title": "KeyModalities"
+                    },
+                    "KeyModalityEnvVarConfig": {
+                        "properties": {
+                            "current_value": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/KeyModalities"
+                                    }
+                                ],
+                                "default": "text"
+                            }
+                        },
+                        "title": "KeyModalityEnvVarConfig",
+                        "type": "object"
+                    },
+                    "ModeratorRoleActionsConfig": {
+                        "properties": {
+                            "registry_players": {
+                                "$ref": "#/$defs/RegistryPlayersActionConfig"
+                            },
+                            "init_game": {
+                                "$ref": "#/$defs/InitGameActionConfig"
+                            },
+                            "introduce_game_rule": {
+                                "$ref": "#/$defs/IntroduceGameRuleActionConfig"
+                            },
+                            "announce_game_start": {
+                                "$ref": "#/$defs/AnnounceGameStartActionConfig"
+                            },
+                            "assign_keys": {
+                                "$ref": "#/$defs/AssignKeysActionConfig"
+                            },
+                            "ask_for_key_description": {
+                                "$ref": "#/$defs/AskForKeyDescriptionActionConfig"
+                            },
+                            "valid_player_description": {
+                                "$ref": "#/$defs/ValidPlayerDescriptionActionConfig"
+                            },
+                            "ask_for_role_prediction": {
+                                "$ref": "#/$defs/AskForRolePredictionActionConfig"
+                            },
+                            "summarize_players_prediction": {
+                                "$ref": "#/$defs/SummarizePlayersPredictionActionConfig"
+                            },
+                            "ask_for_vote": {
+                                "$ref": "#/$defs/AskForVoteActionConfig"
+                            },
+                            "summarize_player_votes": {
+                                "$ref": "#/$defs/SummarizePlayerVotesActionConfig"
+                            },
+                            "check_if_game_over": {
+                                "$ref": "#/$defs/CheckIfGameOverActionConfig"
+                            },
+                            "reset_inner_status": {
+                                "$ref": "#/$defs/ResetInnerStatusActionConfig"
+                            }
+                        },
+                        "required": [
+                            "registry_players",
+                            "init_game",
+                            "introduce_game_rule",
+                            "announce_game_start",
+                            "assign_keys",
+                            "ask_for_key_description",
+                            "valid_player_description",
+                            "ask_for_role_prediction",
+                            "summarize_players_prediction",
+                            "ask_for_vote",
+                            "summarize_player_votes",
+                            "check_if_game_over",
+                            "reset_inner_status"
+                        ],
+                        "title": "ModeratorRoleActionsConfig",
+                        "type": "object"
+                    },
+                    "ModeratorRoleConfig": {
+                        "properties": {
+                            "actions_config": {
+                                "$ref": "#/$defs/ModeratorRoleActionsConfig"
+                            },
+                            "agents_config": {
+                                "default": [
+                                    {
+                                        "config_data": {},
+                                        "obj_for_import": {
+                                            "module": "who_is_the_spy.agents.moderator",
+                                            "obj": "Moderator",
+                                            "source_file": null
+                                        }
+                                    }
+                                ],
+                                "items": {
+                                    "$ref": "#/$defs/RoleAgentConfig"
+                                },
+                                "maxItems": 1,
+                                "minItems": 1,
+                                "title": "Agents Config",
+                                "type": "array"
+                            },
+                            "is_static": {
+                                "const": true,
+                                "default": true,
+                                "title": "Is Static"
+                            }
+                        },
+                        "required": [
+                            "actions_config"
+                        ],
+                        "title": "ModeratorRoleConfig",
+                        "type": "object"
+                    },
+                    "NumRoundsEnvVarConfig": {
+                        "properties": {
+                            "current_value": {
+                                "default": 1,
+                                "title": "Current Value",
+                                "type": "integer"
+                            }
+                        },
+                        "title": "NumRoundsEnvVarConfig",
+                        "type": "object"
+                    },
+                    "PlayerRoleActionsConfig": {
+                        "properties": {
+                            "receive_key": {
+                                "$ref": "#/$defs/ReceiveKeyActionConfig"
+                            },
+                            "describe_key": {
+                                "$ref": "#/$defs/DescribeKeyActionConfig"
+                            },
+                            "predict_role": {
+                                "$ref": "#/$defs/PredictRoleActionConfig"
+                            },
+                            "vote": {
+                                "$ref": "#/$defs/VoteActionConfig"
+                            },
+                            "reset_inner_status": {
+                                "$ref": "#/$defs/ResetInnerStatusActionConfig"
+                            }
+                        },
+                        "required": [
+                            "receive_key",
+                            "describe_key",
+                            "predict_role",
+                            "vote",
+                            "reset_inner_status"
+                        ],
+                        "title": "PlayerRoleActionsConfig",
+                        "type": "object"
+                    },
+                    "PlayerRoleConfig": {
+                        "properties": {
+                            "actions_config": {
+                                "$ref": "#/$defs/PlayerRoleActionsConfig"
+                            },
+                            "agents_config": {
+                                "items": {
+                                    "$ref": "#/$defs/RoleAgentConfig"
+                                },
+                                "maxItems": 9,
+                                "minItems": 4,
+                                "title": "Agents Config",
+                                "type": "array"
+                            },
+                            "is_static": {
+                                "const": false,
+                                "default": false,
+                                "title": "Is Static"
+                            }
+                        },
+                        "required": [
+                            "actions_config",
+                            "agents_config"
+                        ],
+                        "title": "PlayerRoleConfig",
+                        "type": "object"
+                    },
+                    "PredictRoleActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "PredictRoleActionConfig",
+                        "type": "object"
+                    },
+                    "ReceiveKeyActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "ReceiveKeyActionConfig",
+                        "type": "object"
+                    },
+                    "RegistryPlayersActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "RegistryPlayersActionConfig",
+                        "type": "object"
+                    },
+                    "ResetInnerStatusActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "ResetInnerStatusActionConfig",
+                        "type": "object"
+                    },
+                    "RoleAgentConfig": {
+                        "properties": {
+                            "config_data": {
+                                "title": "Config Data",
+                                "type": "object"
+                            },
+                            "obj_for_import": {
+                                "$ref": "#/$defs/DynamicObject"
+                            }
+                        },
+                        "required": [
+                            "config_data",
+                            "obj_for_import"
+                        ],
+                        "title": "RoleAgentConfig",
+                        "type": "object"
+                    },
+                    "SummarizePlayerVotesActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "SummarizePlayerVotesActionConfig",
+                        "type": "object"
+                    },
+                    "SummarizePlayersPredictionActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "SummarizePlayersPredictionActionConfig",
+                        "type": "object"
+                    },
+                    "ValidPlayerDescriptionActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "ValidPlayerDescriptionActionConfig",
+                        "type": "object"
+                    },
+                    "VoteActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "VoteActionConfig",
+                        "type": "object"
+                    },
+                    "WhoisthespySceneEnvVarsConfig": {
+                        "properties": {
+                            "key_modality": {
+                                "$ref": "#/$defs/KeyModalityEnvVarConfig"
+                            },
+                            "num_rounds": {
+                                "$ref": "#/$defs/NumRoundsEnvVarConfig"
+                            },
+                            "has_blank": {
+                                "$ref": "#/$defs/HasBlankEnvVarConfig"
+                            }
+                        },
+                        "required": [
+                            "key_modality",
+                            "num_rounds",
+                            "has_blank"
+                        ],
+                        "title": "WhoisthespySceneEnvVarsConfig",
+                        "type": "object"
+                    },
+                    "WhoisthespySceneRolesConfig": {
+                        "properties": {
+                            "moderator": {
+                                "$ref": "#/$defs/ModeratorRoleConfig"
+                            },
+                            "player": {
+                                "$ref": "#/$defs/PlayerRoleConfig"
+                            }
+                        },
+                        "required": [
+                            "moderator",
+                            "player"
+                        ],
+                        "title": "WhoisthespySceneRolesConfig",
+                        "type": "object"
+                    }
+                },
+                "properties": {
+                    "env_vars_config": {
+                        "$ref": "#/$defs/WhoisthespySceneEnvVarsConfig"
+                    },
+                    "roles_config": {
+                        "$ref": "#/$defs/WhoisthespySceneRolesConfig"
+                    }
+                },
+                "required": [
+                    "env_vars_config",
+                    "roles_config"
+                ],
+                "title": "WhoisthespySceneConfig",
+                "type": "object"
+            },
+            "obj_for_import": {
+                "obj": "WhoIsTheSpyScene",
+                "module": "who_is_the_spy.scene",
+                "source_file": null
+            }
+        },
+        "agents_metadata": {
+            "moderator": [
+                {
+                    "cls_name": "Moderator",
+                    "description": "An agent who moderate the game: Who is the Spy",
+                    "config_schema": null,
+                    "obj_for_import": {
+                        "obj": "Moderator",
+                        "module": "who_is_the_spy.agents.moderator",
+                        "source_file": null
+                    }
+                }
+            ],
+            "player": [
+                {
+                    "cls_name": "OpenAIBasicPlayer",
+                    "description": "An AI agent using OpenAI as backend, participants in the game Who is the Spy as a player",
+                    "config_schema": {
+                        "$defs": {
+                            "OpenAIBackendConfig": {
+                                "properties": {
+                                    "model": {
+                                        "enum": [
+                                            "babbage-002",
+                                            "davinci-002",
+                                            "gpt-3.5-turbo-instruct",
+                                            "text-davinci-003",
+                                            "text-davinci-002",
+                                            "text-davinci-001",
+                                            "code-davinci-002",
+                                            "text-curie-001",
+                                            "text-babbage-001",
+                                            "text-ada-001",
+                                            "gpt-4-1106-preview",
+                                            "gpt-4-vision-preview",
+                                            "gpt-4",
+                                            "gpt-4-0314",
+                                            "gpt-4-0613",
+                                            "gpt-4-32k",
+                                            "gpt-4-32k-0314",
+                                            "gpt-4-32k-0613",
+                                            "gpt-3.5-turbo",
+                                            "gpt-3.5-turbo-16k",
+                                            "gpt-3.5-turbo-0301",
+                                            "gpt-3.5-turbo-0613",
+                                            "gpt-3.5-turbo-16k-0613"
+                                        ],
+                                        "title": "Model",
+                                        "type": "string"
+                                    },
+                                    "api_key": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Key"
+                                    },
+                                    "organization": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Organization"
+                                    },
+                                    "base_url": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Base Url"
+                                    },
+                                    "azure_endpoint": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Endpoint"
+                                    },
+                                    "azure_deployment": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Deployment"
+                                    },
+                                    "api_version": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Version"
+                                    },
+                                    "is_azure": {
+                                        "default": false,
+                                        "title": "Is Azure",
+                                        "type": "boolean"
+                                    },
+                                    "max_retries": {
+                                        "default": 2,
+                                        "title": "Max Retries",
+                                        "type": "integer"
+                                    },
+                                    "timeout": {
+                                        "default": 60,
+                                        "title": "Timeout",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "model"
+                                ],
+                                "title": "OpenAIBackendConfig",
+                                "type": "object"
+                            },
+                            "Profile": {
+                                "properties": {
+                                    "id": {
+                                        "title": "Id",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/$defs/Role"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "title": "Profile",
+                                "type": "object"
+                            },
+                            "Role": {
+                                "properties": {
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "title": "Description",
+                                        "type": "string"
+                                    },
+                                    "is_static": {
+                                        "default": false,
+                                        "title": "Is Static",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "title": "Role",
+                                "type": "object"
+                            }
+                        },
+                        "properties": {
+                            "profile": {
+                                "$ref": "#/$defs/Profile"
+                            },
+                            "chart_major_color": {
+                                "anyOf": [
+                                    {
+                                        "pattern": "^#[0-9a-fA-F]{6}$",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Chart Major Color"
+                            },
+                            "ai_backend_config": {
+                                "$ref": "#/$defs/OpenAIBackendConfig"
+                            }
+                        },
+                        "required": [
+                            "profile",
+                            "ai_backend_config"
+                        ],
+                        "title": "OpenAIBasicPlayerConfig",
+                        "type": "object"
+                    },
+                    "obj_for_import": {
+                        "obj": "OpenAIBasicPlayer",
+                        "module": "who_is_the_spy.agents.openai_basic_player",
+                        "source_file": null
+                    }
+                }
+            ]
+        },
+        "evaluators_metadata": null
+    },
+    "leaf_version": "0.1.0.dev0"
+}
