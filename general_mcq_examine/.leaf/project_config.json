@@ -40,7 +40,7 @@
                                             "annotation": "<class 'leaf_playground.data.profile.Profile'>"
                                         }
                                     ],
-                                    "return_annotation": "ExamineeAnswer",
+                                    "return_annotation": "<class 'general_mcq_examine.scene_definition.ExamineeAnswer'>",
                                     "is_static_method": false
                                 },
                                 "metrics": [
@@ -561,7 +561,6 @@
                             "Profile": {
                                 "properties": {
                                     "id": {
-                                        "format": "uuid",
                                         "title": "Id",
                                         "type": "string"
                                     },
