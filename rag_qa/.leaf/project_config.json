@@ -1,0 +1,792 @@
+{
+    "name": "rag_qa",
+    "version": "0.1.0",
+    "metadata": {
+        "scene_metadata": {
+            "scene_definition": {
+                "name": "RAG QA Examine",
+                "description": "Retrieval Augmented Generation Question Answering Examine Scene. The evaluator powered by ragas.",
+                "env_vars": [],
+                "roles": [
+                    {
+                        "name": "examiner",
+                        "description": "the one that participants in a rag based qa examine to monitor the examinees",
+                        "actions": [],
+                        "num_agents_range": [
+                            1,
+                            1
+                        ],
+                        "is_static": true
+                    },
+                    {
+                        "name": "examinee",
+                        "description": "the one that participants in a rag based qa examine to answer questions",
+                        "actions": [
+                            {
+                                "name": "answer_question",
+                                "description": "answering the question sent by examiner",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "question",
+                                            "annotation": "<class 'rag_qa.scene_definition.ExaminerQuestion'>"
+                                        },
+                                        {
+                                            "name": "examiner",
+                                            "annotation": "<class 'leaf_playground.data.profile.Profile'>"
+                                        }
+                                    ],
+                                    "return_annotation": "ExamineeAnswer",
+                                    "is_static_method": false
+                                },
+                                "metrics": [
+                                    {
+                                        "name": "answer_correctness",
+                                        "description": "answer_correctness of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "answer_relevancy",
+                                        "description": "answer_relevancy of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "answer_similarity",
+                                        "description": "answer_similarity of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "context_precision",
+                                        "description": "context_precision of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "context_recall",
+                                        "description": "context_recall of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "context_relevancy",
+                                        "description": "context_relevancy of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "faithfulness",
+                                        "description": "faithfulness of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    }
+                                ]
+                            }
+                        ],
+                        "num_agents_range": [
+                            1,
+                            -1
+                        ],
+                        "is_static": false
+                    }
+                ]
+            },
+            "config_schema": {
+                "$defs": {
+                    "AnswerQuestionActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "$ref": "#/$defs/AnswerQuestionActionMetricsConfig"
+                            }
+                        },
+                        "required": [
+                            "metrics_config"
+                        ],
+                        "title": "AnswerQuestionActionConfig",
+                        "type": "object"
+                    },
+                    "AnswerQuestionActionMetricsConfig": {
+                        "properties": {
+                            "answer_correctness": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "answer_relevancy": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "answer_similarity": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "context_precision": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "context_recall": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "context_relevancy": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "faithfulness": {
+                                "$ref": "#/$defs/MetricConfig"
+                            }
+                        },
+                        "required": [
+                            "answer_correctness",
+                            "answer_relevancy",
+                            "answer_similarity",
+                            "context_precision",
+                            "context_recall",
+                            "context_relevancy",
+                            "faithfulness"
+                        ],
+                        "title": "AnswerQuestionActionMetricsConfig",
+                        "type": "object"
+                    },
+                    "DatasetConfig": {
+                        "properties": {
+                            "path": {
+                                "default": "explodinggradients/fiqa",
+                                "title": "Path",
+                                "type": "string"
+                            },
+                            "split": {
+                                "default": "baseline",
+                                "title": "Split",
+                                "type": "string"
+                            },
+                            "question_column": {
+                                "default": "question",
+                                "title": "Question Column",
+                                "type": "string"
+                            },
+                            "golden_answer_column": {
+                                "default": "answer",
+                                "title": "Golden Answer Column",
+                                "type": "string"
+                            },
+                            "ground_truth_column": {
+                                "default": "ground_truths",
+                                "title": "Ground Truth Column",
+                                "type": "string"
+                            },
+                            "num_questions": {
+                                "default": -1,
+                                "title": "Num Questions",
+                                "type": "integer"
+                            },
+                            "filter_conditions": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "$ref": "#/$defs/DynamicFn"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Filter Conditions"
+                            },
+                            "question_preprocessor": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/$defs/DynamicFn"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null
+                            },
+                            "name": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Name"
+                            },
+                            "data_dir": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Data Dir"
+                            },
+                            "data_files": {
+                                "anyOf": [
+                                    {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Data Files"
+                            }
+                        },
+                        "title": "DatasetConfig",
+                        "type": "object"
+                    },
+                    "DynamicFn": {
+                        "properties": {
+                            "fn": {
+                                "$ref": "#/$defs/DynamicObject"
+                            },
+                            "default_kwargs": {
+                                "anyOf": [
+                                    {
+                                        "type": "object"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Default Kwargs"
+                            }
+                        },
+                        "required": [
+                            "fn"
+                        ],
+                        "title": "DynamicFn",
+                        "type": "object"
+                    },
+                    "DynamicObject": {
+                        "properties": {
+                            "obj": {
+                                "title": "Obj",
+                                "type": "string"
+                            },
+                            "module": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Module"
+                            },
+                            "source_file": {
+                                "anyOf": [
+                                    {
+                                        "format": "file-path",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Source File"
+                            }
+                        },
+                        "required": [
+                            "obj"
+                        ],
+                        "title": "DynamicObject",
+                        "type": "object"
+                    },
+                    "ExamineeRoleActionsConfig": {
+                        "properties": {
+                            "answer_question": {
+                                "$ref": "#/$defs/AnswerQuestionActionConfig"
+                            }
+                        },
+                        "required": [
+                            "answer_question"
+                        ],
+                        "title": "ExamineeRoleActionsConfig",
+                        "type": "object"
+                    },
+                    "ExamineeRoleConfig": {
+                        "properties": {
+                            "actions_config": {
+                                "$ref": "#/$defs/ExamineeRoleActionsConfig"
+                            },
+                            "agents_config": {
+                                "items": {
+                                    "$ref": "#/$defs/RoleAgentConfig"
+                                },
+                                "minItems": 1,
+                                "title": "Agents Config",
+                                "type": "array"
+                            },
+                            "is_static": {
+                                "const": false,
+                                "default": false,
+                                "title": "Is Static"
+                            }
+                        },
+                        "required": [
+                            "actions_config",
+                            "agents_config"
+                        ],
+                        "title": "ExamineeRoleConfig",
+                        "type": "object"
+                    },
+                    "ExaminerRoleActionsConfig": {
+                        "properties": {},
+                        "title": "ExaminerRoleActionsConfig",
+                        "type": "object"
+                    },
+                    "ExaminerRoleConfig": {
+                        "properties": {
+                            "actions_config": {
+                                "$ref": "#/$defs/ExaminerRoleActionsConfig"
+                            },
+                            "agents_config": {
+                                "default": [
+                                    {
+                                        "config_data": {},
+                                        "obj_for_import": {
+                                            "module": "rag_qa.agents.examiner",
+                                            "obj": "Examiner",
+                                            "source_file": null
+                                        }
+                                    }
+                                ],
+                                "items": {
+                                    "$ref": "#/$defs/RoleAgentConfig"
+                                },
+                                "maxItems": 1,
+                                "minItems": 1,
+                                "title": "Agents Config",
+                                "type": "array"
+                            },
+                            "is_static": {
+                                "const": true,
+                                "default": true,
+                                "title": "Is Static"
+                            }
+                        },
+                        "required": [
+                            "actions_config"
+                        ],
+                        "title": "ExaminerRoleConfig",
+                        "type": "object"
+                    },
+                    "MetricConfig": {
+                        "properties": {
+                            "enable": {
+                                "default": true,
+                                "title": "Enable",
+                                "type": "boolean"
+                            }
+                        },
+                        "title": "MetricConfig",
+                        "type": "object"
+                    },
+                    "Rag_qa_examineSceneRolesConfig": {
+                        "properties": {
+                            "examiner": {
+                                "$ref": "#/$defs/ExaminerRoleConfig"
+                            },
+                            "examinee": {
+                                "$ref": "#/$defs/ExamineeRoleConfig"
+                            }
+                        },
+                        "required": [
+                            "examiner",
+                            "examinee"
+                        ],
+                        "title": "Rag qa examineSceneRolesConfig",
+                        "type": "object"
+                    },
+                    "RoleAgentConfig": {
+                        "properties": {
+                            "config_data": {
+                                "title": "Config Data",
+                                "type": "object"
+                            },
+                            "obj_for_import": {
+                                "$ref": "#/$defs/DynamicObject"
+                            }
+                        },
+                        "required": [
+                            "config_data",
+                            "obj_for_import"
+                        ],
+                        "title": "RoleAgentConfig",
+                        "type": "object"
+                    }
+                },
+                "properties": {
+                    "env_vars_config": {
+                        "const": null,
+                        "default": null,
+                        "title": "Env Vars Config"
+                    },
+                    "roles_config": {
+                        "$ref": "#/$defs/Rag_qa_examineSceneRolesConfig"
+                    },
+                    "dataset_config": {
+                        "$ref": "#/$defs/DatasetConfig"
+                    }
+                },
+                "required": [
+                    "roles_config",
+                    "dataset_config"
+                ],
+                "title": "Rag qa examineSceneConfig",
+                "type": "object"
+            },
+            "obj_for_import": {
+                "obj": "RagScene",
+                "module": "rag_qa.scene",
+                "source_file": null
+            }
+        },
+        "agents_metadata": {
+            "examiner": [
+                {
+                    "cls_name": "Examiner",
+                    "description": "An agent who minitor the examine",
+                    "config_schema": null,
+                    "obj_for_import": {
+                        "obj": "Examiner",
+                        "module": "rag_qa.agents.examiner",
+                        "source_file": null
+                    }
+                }
+            ],
+            "examinee": [
+                {
+                    "cls_name": "OpenAIBasicExaminee",
+                    "description": "Examinee agent using OpenAI API to answer questions",
+                    "config_schema": {
+                        "$defs": {
+                            "OpenAIBackendConfig": {
+                                "properties": {
+                                    "model": {
+                                        "enum": [
+                                            "babbage-002",
+                                            "davinci-002",
+                                            "gpt-3.5-turbo-instruct",
+                                            "text-davinci-003",
+                                            "text-davinci-002",
+                                            "text-davinci-001",
+                                            "code-davinci-002",
+                                            "text-curie-001",
+                                            "text-babbage-001",
+                                            "text-ada-001",
+                                            "gpt-4-1106-preview",
+                                            "gpt-4-vision-preview",
+                                            "gpt-4",
+                                            "gpt-4-0314",
+                                            "gpt-4-0613",
+                                            "gpt-4-32k",
+                                            "gpt-4-32k-0314",
+                                            "gpt-4-32k-0613",
+                                            "gpt-3.5-turbo",
+                                            "gpt-3.5-turbo-16k",
+                                            "gpt-3.5-turbo-0301",
+                                            "gpt-3.5-turbo-0613",
+                                            "gpt-3.5-turbo-16k-0613"
+                                        ],
+                                        "title": "Model",
+                                        "type": "string"
+                                    },
+                                    "api_key": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Key"
+                                    },
+                                    "organization": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Organization"
+                                    },
+                                    "base_url": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Base Url"
+                                    },
+                                    "azure_endpoint": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Endpoint"
+                                    },
+                                    "azure_deployment": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Deployment"
+                                    },
+                                    "api_version": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Version"
+                                    },
+                                    "is_azure": {
+                                        "default": false,
+                                        "title": "Is Azure",
+                                        "type": "boolean"
+                                    },
+                                    "max_retries": {
+                                        "default": 2,
+                                        "title": "Max Retries",
+                                        "type": "integer"
+                                    },
+                                    "timeout": {
+                                        "default": 60,
+                                        "title": "Timeout",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "model"
+                                ],
+                                "title": "OpenAIBackendConfig",
+                                "type": "object"
+                            },
+                            "Profile": {
+                                "properties": {
+                                    "id": {
+                                        "title": "Id",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/$defs/Role"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "title": "Profile",
+                                "type": "object"
+                            },
+                            "Role": {
+                                "properties": {
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "title": "Description",
+                                        "type": "string"
+                                    },
+                                    "is_static": {
+                                        "default": false,
+                                        "title": "Is Static",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "title": "Role",
+                                "type": "object"
+                            }
+                        },
+                        "properties": {
+                            "profile": {
+                                "$ref": "#/$defs/Profile"
+                            },
+                            "chart_major_color": {
+                                "anyOf": [
+                                    {
+                                        "pattern": "^#[0-9a-fA-F]{6}$",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Chart Major Color"
+                            },
+                            "ai_backend_config": {
+                                "$ref": "#/$defs/OpenAIBackendConfig"
+                            }
+                        },
+                        "required": [
+                            "profile",
+                            "ai_backend_config"
+                        ],
+                        "title": "OpenAIBasicExamineeConfig",
+                        "type": "object"
+                    },
+                    "obj_for_import": {
+                        "obj": "OpenAIBasicExaminee",
+                        "module": "rag_qa.agents.openai_basic_examinee",
+                        "source_file": null
+                    }
+                }
+            ]
+        },
+        "evaluators_metadata": [
+            {
+                "cls_name": "RagasEvaluator",
+                "description": "Retrieval augmented generation question answering examine scene evaluator powered by ragas.",
+                "config_schema": {
+                    "properties": {},
+                    "title": "RagasEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "RagasEvaluator",
+                    "module": "rag_qa.metric_evaluators.ragas_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.answer_correctness",
+                    "examinee.answer_question.answer_relevancy",
+                    "examinee.answer_question.answer_similarity",
+                    "examinee.answer_question.context_precision",
+                    "examinee.answer_question.context_recall",
+                    "examinee.answer_question.context_relevancy",
+                    "examinee.answer_question.faithfulness"
+                ]
+            }
+        ]
+    },
+    "leaf_version": "0.1.0.dev0"
+}
