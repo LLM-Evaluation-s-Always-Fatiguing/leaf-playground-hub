@@ -40,7 +40,7 @@
                                             "annotation": "<class 'leaf_playground.data.profile.Profile'>"
                                         }
                                     ],
-                                    "return_annotation": "ExamineeAnswer",
+                                    "return_annotation": "<class 'rag_qa.scene_definition.ExamineeAnswer'>",
                                     "is_static_method": false
                                 },
                                 "metrics": [
