@@ -186,7 +186,7 @@ class PlayerPrediction(TextMessage):
         def retrieve_names(symbol: str) -> Set[str]:
             names = set()
             content = self.content.text
-            if symbol in names:
+            if symbol in content:
                 content = content[content.index(symbol) + len(symbol):].strip()
                 content = content.split(":")[0].strip()
                 for pred in content.split(","):
