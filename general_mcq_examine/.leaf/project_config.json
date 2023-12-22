@@ -651,7 +651,39 @@
                 "cls_name": "ExamineeAnswerEvaluator",
                 "description": "An evaluator that evaluate examinee's answers",
                 "config_schema": {
-                    "properties": {},
+                    "$defs": {
+                        "RegexEvalToolConfig": {
+                            "properties": {
+                                "regex_rules": {
+                                    "default": [
+                                        "\\b([A-D])\\b"
+                                    ],
+                                    "description": "Regex rules for extracting answers from the scene.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "title": "Regex Rules",
+                                    "type": "array"
+                                },
+                                "ignore_case": {
+                                    "default": true,
+                                    "description": "Whether to ignore case when matching regex rules and answers.",
+                                    "title": "Ignore Case",
+                                    "type": "boolean"
+                                }
+                            },
+                            "title": "RegexEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "regexEvalToolConfig": {
+                            "$ref": "#/$defs/RegexEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "regexEvalToolConfig"
+                    ],
                     "title": "ExamineeAnswerEvaluatorConfig",
                     "type": "object"
                 },
@@ -666,5 +698,5 @@
             }
         ]
     },
-    "leaf_version": "0.1.0.dev0"
+    "leaf_version": "0.1.0"
 }
