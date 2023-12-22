@@ -648,8 +648,8 @@
         },
         "evaluators_metadata": [
             {
-                "cls_name": "ExamineeAnswerEvaluator",
-                "description": "An evaluator that evaluate examinee's answers",
+                "cls_name": "RegexEvaluator",
+                "description": "Regex evaluator (uses the specified regular expression to extract the answer, then compares it to the reference answer).",
                 "config_schema": {
                     "$defs": {
                         "RegexEvalToolConfig": {
@@ -684,12 +684,29 @@
                     "required": [
                         "regexEvalToolConfig"
                     ],
-                    "title": "ExamineeAnswerEvaluatorConfig",
+                    "title": "RegexEvaluatorConfig",
                     "type": "object"
                 },
                 "obj_for_import": {
-                    "obj": "ExamineeAnswerEvaluator",
-                    "module": "general_mcq_examine.metric_evaluators.examinee_answer_evaluator",
+                    "obj": "RegexEvaluator",
+                    "module": "general_mcq_examine.metric_evaluators.regex_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.accurate"
+                ]
+            },
+            {
+                "cls_name": "SimpleEvaluator",
+                "description": "A simple evaluator (determines whether the answer starts with the reference answer, ignoring case sensitivity).",
+                "config_schema": {
+                    "properties": {},
+                    "title": "SimpleEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "SimpleEvaluator",
+                    "module": "general_mcq_examine.metric_evaluators.simple_evaluator",
                     "source_file": null
                 },
                 "metrics": [

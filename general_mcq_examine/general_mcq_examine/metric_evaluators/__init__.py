@@ -1,1 +1,2 @@
-from .examinee_answer_evaluator import *
+from .regex_evaluator import *
+from .simple_evaluator import *

@@ -12,16 +12,17 @@ from ..scene_definition import ExamineeAnswer, SCENE_DEFINITION
 ROLE_DEFINITION = SCENE_DEFINITION.get_role_definition("examinee")
 
 
-class ExamineeAnswerEvaluatorConfig(MetricEvaluatorConfig):
+class RegexEvaluatorConfig(MetricEvaluatorConfig):
     regexEvalToolConfig: RegexEvalToolConfig = Field(...)
 
 
-class ExamineeAnswerEvaluator(
+class RegexEvaluator(
     MetricEvaluator,
-    metric_definitions=ROLE_DEFINITION.get_action_definition("answer_question").metrics,
-    cls_description="An evaluator that evaluate examinee's answers",
+    metric_definitions=ROLE_DEFINITION.get_action_definition(
+        "answer_question").metrics,
+    cls_description="Regex evaluator (uses the specified regular expression to extract the answer, then compares it to the reference answer).",
 ):
-    config_cls = ExamineeAnswerEvaluatorConfig
+    config_cls = RegexEvaluatorConfig
     config: config_cls
 
     @staticmethod
@@ -30,8 +31,9 @@ class ExamineeAnswerEvaluator(
         record_metrics: List[_MetricName],
         compare_metrics: List[_MetricName]
     ) -> Any:
-        if isinstance(config, ExamineeAnswerEvaluatorConfig):
-            regexEvalTool: RegexEvalTool = RegexEvalTool.from_config(config.regexEvalToolConfig)
+        if isinstance(config, RegexEvaluatorConfig):
+            regexEvalTool: RegexEvalTool = RegexEvalTool.from_config(
+                config.regexEvalToolConfig)
             return regexEvalTool
         else:
             raise ValueError(f"Invalid config type {type(config)}")
@@ -43,21 +45,24 @@ class ExamineeAnswerEvaluator(
             origin_answer = log.response.content.text
             ground_truth = log.ground_truth.text
             ignore_case = True
+            misc = {
+                "question": log.references[0].content.text,
+                "agent_answer": answer,
+                "ground_truth": ground_truth
+            }
             if isinstance(evaluator, RegexEvalTool):
                 answer = evaluator.extract_answer(origin_answer)
                 ignore_case = evaluator.ignore_case
+                misc["extracted_answer"] = answer
             else:
                 answer = origin_answer
-            
-            is_correct = answer.lower().startswith(ground_truth.lower()) if ignore_case else answer.startswith(ground_truth)
+
+            is_correct = answer.lower().startswith(
+                ground_truth.lower()) if ignore_case else answer.startswith(ground_truth)
 
             result["examinee.answer_question.accurate"] = RecordOutput(
                 record_value=is_correct,
-                misc={
-                    "question": log.references[0].content.text,
-                    "agent_answer": answer,
-                    "ground_truth": ground_truth
-                }
+                misc=misc
             )
         return result
 
@@ -67,6 +72,6 @@ class ExamineeAnswerEvaluator(
 
 
 __all__ = [
-    "ExamineeAnswerEvaluatorConfig",
-    "ExamineeAnswerEvaluator"
+    "RegexEvaluatorConfig",
+    "RegexEvaluator"
 ]
