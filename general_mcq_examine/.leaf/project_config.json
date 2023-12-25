@@ -713,7 +713,21 @@
                     "examinee.answer_question.accurate"
                 ]
             }
+        ],
+        "charts_metadata": [
+            {
+                "cls_name": "BarChart",
+                "obj_for_import": {
+                    "obj": "BarChart",
+                    "module": "general_mcq_examine.charts.bar",
+                    "source_file": null
+                },
+                "chart_name": "bar",
+                "supported_metric_names": [
+                    "examinee.answer_question.accurate"
+                ]
+            }
         ]
     },
-    "leaf_version": "0.1.0"
+    "leaf_version": "0.2.0.dev0"
 }
