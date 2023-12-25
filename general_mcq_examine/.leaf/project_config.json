@@ -716,10 +716,10 @@
         ],
         "charts_metadata": [
             {
-                "cls_name": "BarChart",
+                "cls_name": "AccuracyChart",
                 "obj_for_import": {
-                    "obj": "BarChart",
-                    "module": "general_mcq_examine.charts.bar",
+                    "obj": "AccuracyChart",
+                    "module": "general_mcq_examine.charts.accuracy",
                     "source_file": null
                 },
                 "chart_name": "bar",
