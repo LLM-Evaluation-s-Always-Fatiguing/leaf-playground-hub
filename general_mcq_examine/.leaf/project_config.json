@@ -648,16 +648,65 @@
         },
         "evaluators_metadata": [
             {
-                "cls_name": "ExamineeAnswerEvaluator",
-                "description": "An evaluator that evaluate examinee's answers",
+                "cls_name": "RegexEvaluator",
+                "description": "Regex evaluator (uses the specified regular expression to extract the answer, then compares it to the reference answer).",
                 "config_schema": {
-                    "properties": {},
-                    "title": "ExamineeAnswerEvaluatorConfig",
+                    "$defs": {
+                        "RegexEvalToolConfig": {
+                            "properties": {
+                                "regex_rules": {
+                                    "default": [
+                                        "\\b([A-D])\\b"
+                                    ],
+                                    "description": "Regex rules for extracting answers from the scene.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "title": "Regex Rules",
+                                    "type": "array"
+                                },
+                                "ignore_case": {
+                                    "default": true,
+                                    "description": "Whether to ignore case when matching regex rules and answers.",
+                                    "title": "Ignore Case",
+                                    "type": "boolean"
+                                }
+                            },
+                            "title": "RegexEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "regexEvalToolConfig": {
+                            "$ref": "#/$defs/RegexEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "regexEvalToolConfig"
+                    ],
+                    "title": "RegexEvaluatorConfig",
                     "type": "object"
                 },
                 "obj_for_import": {
-                    "obj": "ExamineeAnswerEvaluator",
-                    "module": "general_mcq_examine.metric_evaluators.examinee_answer_evaluator",
+                    "obj": "RegexEvaluator",
+                    "module": "general_mcq_examine.metric_evaluators.regex_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.accurate"
+                ]
+            },
+            {
+                "cls_name": "SimpleEvaluator",
+                "description": "A simple evaluator (determines whether the answer starts with the reference answer, ignoring case sensitivity).",
+                "config_schema": {
+                    "properties": {},
+                    "title": "SimpleEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "SimpleEvaluator",
+                    "module": "general_mcq_examine.metric_evaluators.simple_evaluator",
                     "source_file": null
                 },
                 "metrics": [
@@ -666,5 +715,5 @@
             }
         ]
     },
-    "leaf_version": "0.1.0.dev0"
+    "leaf_version": "0.1.0"
 }

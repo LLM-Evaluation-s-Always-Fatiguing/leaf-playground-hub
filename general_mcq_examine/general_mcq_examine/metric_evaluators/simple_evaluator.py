@@ -3,6 +3,8 @@ from typing import Any, Dict, List
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
 from leaf_playground.data.log_body import ActionLogBody
+from leaf_playground.eval_tools.regex import RegexEvalTool, RegexEvalToolConfig
+from pydantic import Field
 
 from ..scene_definition import ExamineeAnswer, SCENE_DEFINITION
 
@@ -10,16 +12,16 @@ from ..scene_definition import ExamineeAnswer, SCENE_DEFINITION
 ROLE_DEFINITION = SCENE_DEFINITION.get_role_definition("examinee")
 
 
-class ExamineeAnswerEvaluatorConfig(MetricEvaluatorConfig):
+class SimpleEvaluatorConfig(MetricEvaluatorConfig):
     pass
 
 
-class ExamineeAnswerEvaluator(
+class SimpleEvaluator(
     MetricEvaluator,
     metric_definitions=ROLE_DEFINITION.get_action_definition("answer_question").metrics,
-    cls_description="An evaluator that evaluate examinee's answers",
+    cls_description="A simple evaluator (determines whether the answer starts with the reference answer, ignoring case sensitivity).",
 ):
-    config_cls = ExamineeAnswerEvaluatorConfig
+    config_cls = SimpleEvaluatorConfig
     config: config_cls
 
     @staticmethod
@@ -52,6 +54,6 @@ class ExamineeAnswerEvaluator(
 
 
 __all__ = [
-    "ExamineeAnswerEvaluatorConfig",
-    "ExamineeAnswerEvaluator"
+    "SimpleEvaluatorConfig",
+    "SimpleEvaluator"
 ]
