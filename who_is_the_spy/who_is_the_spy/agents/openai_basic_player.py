@@ -1,7 +1,8 @@
-from typing import List
+import base64
+from typing import List, Literal
 
 import openai
-from leaf_playground.ai_backend.openai import OpenAIBackendConfig, CHAT_MODELS
+from leaf_playground.ai_backend.openai import OpenAIBackendConfig
 from leaf_playground.data.media import Text
 from leaf_playground.data.profile import Profile
 from leaf_playground.utils.import_util import DynamicObject
@@ -11,8 +12,34 @@ from .player import BaseAIPlayer, BaseAIPlayerConfig
 from ..scene_definition import *
 
 
+def encode_local_image(image_path: str):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+
+ChatModels = Literal[
+    "gpt-4-1106-preview",
+    "gpt-4-vision-preview",
+    "gpt-4",
+    "gpt-4-0314",
+    "gpt-4-0613",
+    "gpt-4-32k",
+    "gpt-4-32k-0314",
+    "gpt-4-32k-0613",
+    "gpt-3.5-turbo",
+    "gpt-3.5-turbo-16k",
+    "gpt-3.5-turbo-0301",
+    "gpt-3.5-turbo-0613",
+    "gpt-3.5-turbo-16k-0613",
+]
+
+
+class BackendConfig(OpenAIBackendConfig):
+    model: ChatModels = Field(default=...)
+
+
 class OpenAIBasicPlayerConfig(BaseAIPlayerConfig):
-    ai_backend_config: OpenAIBackendConfig = Field(default=...)
+    ai_backend_config: BackendConfig = Field(default=...)
     ai_backend_obj: DynamicObject = Field(
         default=DynamicObject(obj="OpenAIBackend", module="leaf_playground.ai_backend.openai"),
         exclude=True
@@ -58,42 +85,44 @@ class OpenAIBasicPlayer(
             )
         return messages
 
-    def _prepare_completion_prompt(self, history: List[MessageTypes]) -> str:
-        prompt = f"Your name is {self.name}, a player who is playing the Who is the Spy game.\n\n"
-        for msg in history:
-            content = msg.content.text
-            if isinstance(msg, ModeratorKeyAssignment):
-                content = content.replace(KEY_PLACEHOLDER, self.key_transcript)
-            prompt += f"{msg.sender_name}: {content}\n\n"
-
-        return prompt
-
     async def _respond(self, history: List[MessageTypes]) -> str:
-        if self.language_model in CHAT_MODELS:
-            resp = await self.client.chat.completions.create(
-                messages=self._prepare_chat_message(history),
-                model=self.language_model,
-                max_tokens=64,
-                temperature=0.9
-            )
-            response = resp.choices[0].message.content
-        else:
-            resp = await self.client.completions.create(
-                prompt=self._prepare_completion_prompt(history),
-                model=self.language_model,
-                max_tokens=64,
-                temperature=0.9
-            )
-            response = resp.choices[0].text
+        resp = await self.client.chat.completions.create(
+            messages=self._prepare_chat_message(history),
+            model=self.language_model,
+            max_tokens=64,
+            temperature=0.9
+        )
+        response = resp.choices[0].message.content
         return response
 
     async def receive_key(self, key_assignment: ModeratorKeyAssignment) -> None:
+        key_modality = self.env_var["key_modality"].current_value
         if not key_assignment.key:
             return
-        if self.env_var["key_modality"].current_value == KeyModalities.TEXT:
+        if key_modality == KeyModalities.TEXT:
             self.key_transcript = key_assignment.key.text
-            return
-        # TODO: other modalities
+        elif key_modality == KeyModalities.IMAGE:
+            image_data = encode_local_image(key_assignment.key.url)
+            response = await self.client.chat.completions.create(
+                model=self.vision_model,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "Describe this image using **AT MOST** 16 words."},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_data}",
+                                },
+                            },
+                        ],
+                    }
+                ],
+                max_tokens=24,
+            )
+            self.key_transcript = response.choices[0].message.content
+        # TODO: audio modal
 
     async def describe_key(self, history: List[MessageTypes], receivers: List[Profile]) -> PlayerDescription:
         description = await self._respond(history)

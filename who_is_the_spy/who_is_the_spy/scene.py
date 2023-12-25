@@ -10,9 +10,9 @@ from leaf_playground.core.scene_definition import SceneConfig
 from leaf_playground.data.log_body import ActionLogBody
 from leaf_playground.data.media import Text
 
-from .scene_definition import *
 from .agents.moderator import Moderator
 from .agents.player import BaseAIPlayer
+from .scene_definition import *
 
 
 class WhoIsTheSpyLogBody(ActionLogBody):

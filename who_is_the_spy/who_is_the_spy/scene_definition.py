@@ -29,7 +29,7 @@ class PlayerStatus(Enum):
 
 class KeyModalities(Enum):
     TEXT = "text"
-    # IMAGE = "image"
+    IMAGE = "image"
     # AUDIO = "audio"
 
 
