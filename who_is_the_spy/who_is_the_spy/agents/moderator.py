@@ -6,6 +6,7 @@ from leaf_playground.data.profile import Profile
 from leaf_playground.data.media import Audio, Image, Text
 from leaf_playground.core.scene_agent import SceneStaticAgentConfig, SceneStaticAgent
 
+from ..data_utils import *
 from ..scene_definition import *
 
 
@@ -13,26 +14,6 @@ ROLE_DEFINITION = SCENE_DEFINITION.get_role_definition("moderator")
 
 
 ModeratorConfig = SceneStaticAgentConfig.create_config_model(ROLE_DEFINITION)
-
-
-KEYS = {  # TODO: this is a temporarily mock, implement data loading mechanism in dataset_utils module
-    KeyModalities.TEXT: [
-        ("apple", "pear"),
-        ("pen", "pencil"),
-        ("milk", "soya-bean milk"),
-        ("car", "bus"),
-        ("cat", "dog"),
-        ("book", "magazine"),
-        ("computer", "phone"),
-        ("table", "chair"),
-        ("window", "door"),
-        ("bed", "sofa"),
-        ("bread", "cake"),
-        ("chocolate", "candy"),
-        ("pizza", "hamburger"),
-        ("chicken", "duck"),
-    ]
-}
 
 
 class Moderator(
@@ -166,9 +147,14 @@ class Moderator(
             self.role2players[role].append(self.id2player[player_id])
             self.id2role[player_id] = role
 
-        keys = list(random.choice(KEYS[key_modality]))
-        random.shuffle(keys)  # shuffle to randomize the key assignment
-        self.civilian_key, self.spy_key = Text(text=keys[0]), Text(text=keys[1])  # TODO: multi modal
+        if key_modality == KeyModalities.TEXT:
+            keys = random.choice(load_textual_key())
+            self.civilian_key, self.spy_key = Text(text=keys["Civilian"]), Text(text=keys["Spy"])
+        elif key_modality == KeyModalities.IMAGE:
+            keys = random.choice(load_image_key())
+            self.civilian_key, self.spy_key = Image(url=keys["Civilian"]), Image(url=keys["Spy"])
+        else:
+            raise NotImplementedError(f"[{key_modality.value}] modal not supported yet.")
 
         role_assign_summary = "\n".join(
             [f"- {role.value} :: {[f'{player.name}({player.id})' for player in players]}"
