@@ -786,7 +786,8 @@
                     "examinee.answer_question.faithfulness"
                 ]
             }
-        ]
+        ],
+        "charts_metadata": null
     },
-    "leaf_version": "0.1.0.dev0"
+    "leaf_version": "0.2.0.dev0"
 }
