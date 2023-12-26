@@ -1,14 +1,22 @@
+from typing import List
+
 import pandas as pd
 from leaf_playground.chart_tools.grouped_normalized_bar import GroupedNormalizedBar
-from leaf_playground.core.workers import CombinedMetricsData
-from leaf_playground.core.workers.chart import Chart
+from leaf_playground.core.scene_definition import CombinedMetricsData, SceneConfig
+from leaf_playground.core.workers import MetricEvaluatorConfig, Chart
+from leaf_playground.data.log_body import LogBody
 
 
-class AccuracyChart(Chart, chart_name="bar", supported_metric_names=["examinee.answer_question.accurate"]):
+class AccuracyChart(Chart, chart_name="accuracy", supported_metric_names=["examinee.answer_question.accurate"]):
 
-    def _generate(self, metrics: CombinedMetricsData):
+    def _generate(
+        self,
+        metrics: CombinedMetricsData,
+        scene_config: SceneConfig,
+        evaluator_configs: List[MetricEvaluatorConfig],
+        logs: List[LogBody]
+    ) -> dict:
         chart = GroupedNormalizedBar(mode="percent")
-
 
         data = self._transform_data(metrics['metrics'])
 
