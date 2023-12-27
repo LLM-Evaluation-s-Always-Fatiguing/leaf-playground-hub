@@ -161,13 +161,14 @@ class Moderator(
              for role, players in self.role2players.items()]
         )
         key_assign_summary = f"- civilian :: {self.civilian_key}\n- spy :: {self.spy_key}"
+        msg = (
+            f"## Roles and Keys assignment Results\n\n"
+            f"### Roles\n{role_assign_summary}\n\n### Keys\n{key_assign_summary}"
+        )
         return ModeratorSummary(
             sender=self.profile,
             receivers=[self.profile],
-            content=Text(
-                text=f"## Roles and Keys assignment Results\n\n"
-                     f"### Roles\n{role_assign_summary}\n\n### Keys\n{key_assign_summary}"
-            )
+            content=Text(text=msg, display_text=msg)
         )
 
     def introduce_game_rule(self) -> ModeratorSummary:
@@ -176,7 +177,7 @@ class Moderator(
         return ModeratorSummary(
             sender=self.profile,
             receivers=list(self.id2player.values()),
-            content=Text(text=msg)
+            content=Text(text=msg, display_text=msg)
         )
 
     def announce_game_start(self) -> ModeratorSummary:
@@ -189,14 +190,14 @@ class Moderator(
         roles_num_description = ", ".join(
             [f"{len(role_players)} {role2word[role]}" for role, role_players in self.role2players.items()]
         )
-
+        msg = (
+            f"Now the game begins! There are {num_players} players in this game, including "
+            f"{roles_num_description}."
+        )
         return ModeratorSummary(
             sender=self.profile,
             receivers=list(self.id2player.values()),
-            content=Text(
-                text=f"Now the game begins! There are {num_players} players in this game, including "
-                     f"{roles_num_description}."
-            )
+            content=Text(text=msg, display_text=msg)
         )
 
     def assign_keys(self, player: Profile) -> ModeratorKeyAssignment:
@@ -232,13 +233,13 @@ class Moderator(
                 return ModeratorWarning(
                     sender=self.profile,
                     receivers=[description.sender],
-                    content=Text(text=warn_msg),
+                    content=Text(text=warn_msg, display_text=warn_msg),
                     has_warn=True
                 )
         return ModeratorWarning(
             sender=self.profile,
             receivers=[description.sender],
-            content=Text(text=""),
+            content=Text(text="", display_text=""),
             has_warn=False
         )
 
@@ -284,11 +285,11 @@ class Moderator(
                 if self.id2status[player.id] == PlayerStatus.ALIVE
             ]
             label += f"\n- {PlayerRoles.BLANK.value} :: {alive_blanks}"
-
+        msg = "\n\n".join(summaries) + f"\n\n{label}"
         return ModeratorSummary(
             sender=self.profile,
             receivers=[self.profile],
-            content=Text(text="\n\n".join(summaries) + f"\n\n{label}")
+            content=Text(text=msg, display_text=msg)
         )
 
     def ask_for_vote(self) -> ModeratorAskForVote:
@@ -334,24 +335,24 @@ class Moderator(
             )
         most_voted_players = get_most_voted_players()
         if len(most_voted_players) > 1:  # tied
+            msg = (
+                f"{voting_detail}{[p.name for p in most_voted_players]} are having the same "
+                f"votes, for those players, please re-describe the key you received again."
+            )
             return ModeratorVoteSummary(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
-                content=Text(
-                    text=f"{voting_detail}{[p.name for p in most_voted_players]} are having the same "
-                         f"votes, for those players, please re-describe the key you received again."
-                ),
+                content=Text(text=msg, display_text=msg),
                 tied_players=most_voted_players
             )
         else:  # eliminate
             for player in most_voted_players:
                 self.id2status[player.id] = PlayerStatus.ELIMINATED
+            msg = f"{voting_detail}{most_voted_players[0].name} has the most votes and is eliminated."
             return ModeratorVoteSummary(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
-                content=Text(
-                    text=f"{voting_detail}{most_voted_players[0].name} has the most votes and is eliminated."
-                )
+                content=Text(text=msg, display_text=msg)
             )
 
     def check_if_game_over(self) -> ModeratorSummary:
@@ -360,10 +361,11 @@ class Moderator(
                 player.name for player in self.role2players[role]
                 if self.id2status[player.id] == PlayerStatus.ALIVE
             ]
+            msg = f"Game Over! {role.value} win, winners are: {winners}."
             return ModeratorSummary(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
-                content=Text(text=f"Game Over! {role.value} win, winners are: {winners}."),
+                content=Text(text=msg, display_text=msg),
                 is_game_over=True
             )
 
@@ -393,10 +395,12 @@ class Moderator(
             return return_game_over(PlayerRoles.SPY)
         if has_blank and num_alive_spies == 0 and num_alive_civilians != num_alive_players:  # blank wins
             return return_game_over(PlayerRoles.BLANK)
+
+        msg = f"Not any side wins, game continues."
         return ModeratorSummary(
             sender=self.profile,
             receivers=[player for player in self.id2player.values()],
-            content=Text(text=f"Not any side wins, game continues."),
+            content=Text(text=msg, display_text=msg),
         )
 
     def reset_inner_status(self):

@@ -123,12 +123,11 @@ class ModeratorAskForRolePrediction(TextMessage):
                 f"spy: [<player_name>, ..., <player_name>]<EOS>\n"
                 f"Where <player_name> is the name of the player you think is the spy.\n"
             )
+        msg += f"Player names are: {player_names}.\nYour response MUST starts with 'spy:'"
         return cls(
             sender=sender,
             receivers=receivers,
-            content=Text(
-                text=msg + f"Player names are: {player_names}.\nYour response MUST starts with 'spy:'"
-            )
+            content=Text(text=msg, display_text=msg)
         )
 
 
@@ -163,13 +162,14 @@ class ModeratorAskForVote(TextMessage):
                 "vote: <player_name><EOS>\n"
                 "Where <player_name> is the name of the player you want to vote for.\n"
             )
+        msg += (
+            f"Player names are: {','.join([player.name for player in receivers])}.\n"
+            "Your response MUST starts with 'vote:'"
+        )
         return cls(
             sender=sender,
             receivers=receivers,
-            content=Text(
-                text=msg + f"Player names are: {','.join([player.name for player in receivers])}.\n"
-                           "Your response MUST starts with 'vote:'"
-            )
+            content=Text(text=msg, display_text=msg)
         )
 
 

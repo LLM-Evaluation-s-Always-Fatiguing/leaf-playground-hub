@@ -129,7 +129,7 @@ class OpenAIBasicPlayer(
         return PlayerDescription(
             sender=self.profile,
             receivers=receivers,
-            content=Text(text=description)
+            content=Text(text=description, display_text=description)
         )
 
     async def predict_role(self, history: List[MessageTypes], moderator: Profile) -> PlayerPrediction:
@@ -137,7 +137,7 @@ class OpenAIBasicPlayer(
         return PlayerPrediction(
             sender=self.profile,
             receivers=[moderator],
-            content=Text(text=prediction)
+            content=Text(text=prediction, display_text=prediction)
         )
 
     async def vote(self, history: List[MessageTypes], moderator: Profile) -> PlayerVote:
@@ -145,7 +145,7 @@ class OpenAIBasicPlayer(
         return PlayerVote(
             sender=self.profile,
             receivers=[moderator],
-            content=Text(text=vote)
+            content=Text(text=vote, display_text=vote)
         )
 
     def reset_inner_status(self):
