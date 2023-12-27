@@ -227,9 +227,12 @@ class Moderator(
         player_id = description.sender_id
         player_role = self.id2role[player_id]
         if player_role != PlayerRoles.BLANK and self.env_var["key_modality"].current_value == KeyModalities.TEXT:
-            warn_msg = "Your description contains your key, which is not allowed, please redo the description."
-            if (player_role == PlayerRoles.CIVILIAN and self.civilian_key.text in description.content.text) or \
-                    (player_role == PlayerRoles.SPY and self.spy_key.text in description.content.text):
+            warn_msg = (
+                "Your description contains your key, which is not allowed, please redo the description. Reply "
+                "only description of your key, without any additional response."
+            )
+            if (player_role == PlayerRoles.CIVILIAN and self.civilian_key.text.lower() in description.content.text.lower()) or \
+                    (player_role == PlayerRoles.SPY and self.spy_key.text.lower() in description.content.text.lower()):
                 return ModeratorWarning(
                     sender=self.profile,
                     receivers=[description.sender],
