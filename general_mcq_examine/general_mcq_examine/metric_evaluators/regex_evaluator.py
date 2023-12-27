@@ -47,7 +47,7 @@ class RegexEvaluator(
             ignore_case = True
             misc = {
                 "question": log.references[0].content.text,
-                "agent_answer": answer,
+                "agent_answer": origin_answer,
                 "ground_truth": ground_truth
             }
             if isinstance(evaluator, RegexEvalTool):
