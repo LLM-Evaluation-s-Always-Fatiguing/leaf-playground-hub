@@ -78,7 +78,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                     content=Text(text="I have nothing to say.")
                 )
             put_message(
-                message=history,
+                message=description,
                 log_msg=f"{player_.name} sends key description to {self.moderator.name}",
                 action_belonged_chain=player_.role_definition.get_action_definition("describe_key").belonged_chain
             )
