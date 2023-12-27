@@ -40,11 +40,10 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
 
     async def _run(self):
         def put_message(message: MessageTypes, log_msg: str, action_belonged_chain: Optional[str] = None):
-            self.message_pool.put_message(message)
-
             references = None
             if not message.sender_id == self.moderator.id:
-                references = self.message_pool.get_messages(message.sender)[:-1]
+                references = self.message_pool.get_messages(message.sender)
+            self.message_pool.put_message(message)
             self.logger.add_log(
                 self.log_body_class(
                     references=references,
@@ -82,7 +81,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                 log_msg=f"{player_.name} sends key description to {self.moderator.name}",
                 action_belonged_chain=player_.role_definition.get_action_definition("describe_key").belonged_chain
             )
-            return description
+            return description.model_copy(deep=True)
 
         async def player_describe_with_validation(player_: BaseAIPlayer):
             description = await player_describe_key(player_)
