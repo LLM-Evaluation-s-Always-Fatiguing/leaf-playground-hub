@@ -68,7 +68,21 @@ class OpenAIBasicPlayer(
         messages = [
             {
                 "role": "system",
-                "content": f"Your name is {self.name}, a player who is playing the Who is the Spy game."
+                "content": (
+                    f"I want you to be a player named {self.name}, who is playing the Who is the Spy game, "
+                    f"where there will be one moderator and some other players. You need to ALWAYS REMEMBER "
+                    f"that you are a player named {self.name}, not the moderator and other players.\n"
+                    f"In the game, you will be asked to do three things by the moderator:\n"
+                    f"- describe key: in your description, do not include any of the original content "
+                    f"from your key, but instead reveal your key to the other players through as subtle a "
+                    f"description as possible.\n"
+                    f"- predict spy (and blank if has): the moderator will tell you how many spies and blank "
+                    f"player the game will have, when prediction, for each role, you should give the same number "
+                    f"of names, and if you think you are the spy or blank, you can include your name in the final "
+                    f"prediction.\n"
+                    f"- vote to eliminate one player: in the voting stage, you should vote one player to be "
+                    f"eliminated, DO NOT vote yourself, your goal is to survive till the last round."
+                )
             },
             {"role": "system", "content": history[0].content.text}
         ]
@@ -78,7 +92,7 @@ class OpenAIBasicPlayer(
                 content = content.replace(KEY_PLACEHOLDER, self.key_transcript)
             messages.append(
                 {
-                    "role": "user" if msg.sender_role != "moderator" else "system",
+                    "role": "user",
                     "content": content,
                     "name": msg.sender_name
                 }
@@ -136,7 +150,7 @@ class OpenAIBasicPlayer(
         prediction = await self._respond(history)
         return PlayerPrediction(
             sender=self.profile,
-            receivers=[moderator],
+            receivers=[moderator, self.profile],
             content=Text(text=prediction, display_text=prediction)
         )
 
@@ -144,7 +158,7 @@ class OpenAIBasicPlayer(
         vote = await self._respond(history)
         return PlayerVote(
             sender=self.profile,
-            receivers=[moderator],
+            receivers=[moderator, self.profile],
             content=Text(text=vote, display_text=vote)
         )
 
