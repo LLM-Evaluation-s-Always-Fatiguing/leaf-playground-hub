@@ -67,7 +67,10 @@ class ModeratorKeyAssignment(TextMessage):
         return cls(
             sender=sender,
             receivers=[receiver],
-            content=Text(text=f"{receiver.name}, your key is: {KEY_PLACEHOLDER}"),
+            content=Text(
+                text=f"{receiver.name}, your key is: {KEY_PLACEHOLDER}",
+                display_text=f"{receiver.name}, your key is: [{key.display_text}]"
+            ),
             key=key
         )
 
