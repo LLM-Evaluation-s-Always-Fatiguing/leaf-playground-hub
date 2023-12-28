@@ -103,7 +103,7 @@ class Moderator(
             self.id2player[player.id] = player
             self.id2status[player.id] = PlayerStatus.ALIVE
 
-    def init_game(self) -> ModeratorSummary:
+    def init_game(self) -> ModeratorInitGameSummary:
         num_players = len(self.id2player)
         has_blank = self.env_var["has_blank"].current_value
         key_modality = self.env_var["key_modality"].current_value
@@ -165,10 +165,12 @@ class Moderator(
             f"## Roles and Keys assignment Results\n\n"
             f"### Roles\n{role_assign_summary}\n\n### Keys\n{key_assign_summary}"
         )
-        return ModeratorSummary(
+        return ModeratorInitGameSummary(
             sender=self.profile,
             receivers=[self.profile],
-            content=Text(text=msg, display_text=msg)
+            content=Text(text=msg, display_text=msg),
+            role2players={role.value: [p.name for p in players] for role, players in self.role2players.items()},
+            keys={"civilian": self.civilian_key.display_text, "spy": self.spy_key.display_text}
         )
 
     def introduce_game_rule(self) -> ModeratorSummary:
@@ -259,14 +261,16 @@ class Moderator(
             has_blank_slate=has_blank
         )
 
-    def summarize_players_prediction(self, predictions: List[PlayerPrediction]) -> ModeratorSummary:
+    def summarize_players_prediction(self, predictions: List[PlayerPrediction]) -> ModeratorPredictionSummary:
         has_blank = self.env_var["has_blank"].current_value
         summaries = []
+        extracted_predictions = {}
         for prediction in predictions:
             preds = prediction.get_prediction(
                 player_names=[player.name for player in self.id2player.values()],
                 has_blank_slate=has_blank
             )
+            extracted_predictions[prediction.sender_name] = {role.value: list(names) for role, names in preds.items()}
             summary = (
                 f"### {prediction.sender_name}({prediction.sender_id})'s prediction\n"
                 f"- {PlayerRoles.SPY.value} :: {list(preds[PlayerRoles.SPY])}"
@@ -282,17 +286,21 @@ class Moderator(
         label = (
             f"### Correct Answer\n- {PlayerRoles.SPY.value} :: {alive_spies}"
         )
+        ground_truth = {PlayerRoles.SPY.value: alive_spies}
         if has_blank:
             alive_blanks = [
                 player.name for player in self.role2players[PlayerRoles.BLANK]
                 if self.id2status[player.id] == PlayerStatus.ALIVE
             ]
             label += f"\n- {PlayerRoles.BLANK.value} :: {alive_blanks}"
+            ground_truth[PlayerRoles.BLANK.value] = alive_blanks
         msg = "\n\n".join(summaries) + f"\n\n{label}"
-        return ModeratorSummary(
+        return ModeratorPredictionSummary(
             sender=self.profile,
             receivers=[self.profile],
-            content=Text(text=msg, display_text=msg)
+            content=Text(text=msg, display_text=msg),
+            predictions=extracted_predictions,
+            ground_truth=ground_truth
         )
 
     def ask_for_vote(self) -> ModeratorAskForVote:
@@ -346,7 +354,9 @@ class Moderator(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
                 content=Text(text=msg, display_text=msg),
-                tied_players=most_voted_players
+                tied_players=most_voted_players,
+                player_received_votes=player2num_be_voted,
+                players_voted_to=player2votes
             )
         else:  # eliminate
             for player in most_voted_players:
@@ -355,21 +365,24 @@ class Moderator(
             return ModeratorVoteSummary(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
-                content=Text(text=msg, display_text=msg)
+                content=Text(text=msg, display_text=msg),
+                player_received_votes=player2num_be_voted,
+                players_voted_to=player2votes
             )
 
-    def check_if_game_over(self) -> ModeratorSummary:
+    def check_if_game_over(self) -> ModeratorCheckGameOverSummary:
         def return_game_over(role: PlayerRoles):
             winners = [
                 player.name for player in self.role2players[role]
                 if self.id2status[player.id] == PlayerStatus.ALIVE
             ]
             msg = f"Game Over! {role.value} win, winners are: {winners}."
-            return ModeratorSummary(
+            return ModeratorCheckGameOverSummary(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
                 content=Text(text=msg, display_text=msg),
-                is_game_over=True
+                is_game_over=True,
+                winners=winners
             )
 
         has_blank = self.env_var["has_blank"].current_value
@@ -400,10 +413,12 @@ class Moderator(
             return return_game_over(PlayerRoles.BLANK)
 
         msg = f"Not any side wins, game continues."
-        return ModeratorSummary(
+        return ModeratorCheckGameOverSummary(
             sender=self.profile,
             receivers=[player for player in self.id2player.values()],
             content=Text(text=msg, display_text=msg),
+            is_game_over=False,
+            winners=None
         )
 
     def reset_inner_status(self):

@@ -57,7 +57,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorInitGameSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -174,7 +174,7 @@
                                             "annotation": "typing.List[who_is_the_spy.scene_definition.PlayerPrediction]"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorPredictionSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -227,7 +227,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -288,7 +288,7 @@
                                         },
                                         {
                                             "name": "history",
-                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorInitGameSummary, who_is_the_spy.scene_definition.ModeratorPredictionSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
                                         },
                                         {
                                             "name": "receivers",
@@ -311,7 +311,7 @@
                                         },
                                         {
                                             "name": "history",
-                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorInitGameSummary, who_is_the_spy.scene_definition.ModeratorPredictionSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
                                         },
                                         {
                                             "name": "moderator",
@@ -334,7 +334,7 @@
                                         },
                                         {
                                             "name": "history",
-                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorInitGameSummary, who_is_the_spy.scene_definition.ModeratorPredictionSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
                                         },
                                         {
                                             "name": "moderator",

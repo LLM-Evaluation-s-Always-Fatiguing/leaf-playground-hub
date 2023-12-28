@@ -50,12 +50,31 @@ class HasBlank(ConstantEnvironmentVariable):
 
 class ModeratorSummary(TextMessage):
     msg_type: Literal["ModeratorSummary"] = Field(default="ModeratorSummary")
-    is_game_over: bool = Field(default=False)
+
+
+class ModeratorInitGameSummary(ModeratorSummary):
+    msg_type: Literal["ModeratorInitGameSummary"] = Field(default="ModeratorInitGameSummary")
+    role2players: Dict[str, List[str]] = Field(default=...)
+    keys: Dict[str, str] = Field(default=...)
+
+
+class ModeratorPredictionSummary(ModeratorSummary):
+    msg_type: Literal["ModeratorPredictionSummary"] = Field(default="ModeratorPredictionSummary")
+    predictions: Dict[str, Dict[str, List[str]]] = Field(default=...)
+    ground_truth: Dict[str, List[str]] = Field(default=...)
 
 
 class ModeratorVoteSummary(ModeratorSummary):
     msg_type: Literal["ModeratorVoteSummary"] = Field(default="ModeratorVoteSummary")
     tied_players: Optional[List[Profile]] = Field(default=None)
+    player_received_votes: Dict[str, int] = Field(default=...)
+    players_voted_to: Dict[str, str] = Field(default=...)
+
+
+class ModeratorCheckGameOverSummary(ModeratorSummary):
+    msg_type: Literal["ModeratorCheckGameOverSummary"] = Field(default="ModeratorCheckGameOverSummary")
+    is_game_over: bool = Field(default=False)
+    winners: Optional[List[str]] = Field(default=None)
 
 
 class ModeratorKeyAssignment(TextMessage):
@@ -219,7 +238,8 @@ class PlayerVote(TextMessage):
 
 MessageTypes = Annotated[
     Union[
-        ModeratorSummary, ModeratorVoteSummary, ModeratorKeyAssignment, ModeratorWarning,
+        ModeratorSummary, ModeratorInitGameSummary, ModeratorPredictionSummary, ModeratorVoteSummary,
+        ModeratorCheckGameOverSummary, ModeratorKeyAssignment, ModeratorWarning,
         ModeratorAskForDescription, ModeratorAskForRolePrediction, ModeratorAskForVote,
         PlayerDescription, PlayerPrediction, PlayerVote
     ],
@@ -256,7 +276,7 @@ SCENE_DEFINITION = SceneDefinition(
                     description="initialize game",
                     signature=ActionSignatureDefinition(
                         parameters=None,
-                        return_annotation=ModeratorSummary,
+                        return_annotation=ModeratorInitGameSummary,
                         is_static_method=False
                     )
                 ),
@@ -328,7 +348,7 @@ SCENE_DEFINITION = SceneDefinition(
                                 annotation=List[PlayerPrediction]
                             )
                         ],
-                        return_annotation=ModeratorSummary
+                        return_annotation=ModeratorPredictionSummary
                     )
                 ),
                 ActionDefinition(
@@ -361,7 +381,7 @@ SCENE_DEFINITION = SceneDefinition(
                     description="check whether the game is over",
                     signature=ActionSignatureDefinition(
                         parameters=None,
-                        return_annotation=ModeratorSummary
+                        return_annotation=ModeratorCheckGameOverSummary
                     )
                 ),
                 ActionDefinition(
@@ -482,7 +502,10 @@ __all__ = [
     "PlayerPrediction",
     "PlayerVote",
     "ModeratorSummary",
+    "ModeratorInitGameSummary",
+    "ModeratorPredictionSummary",
     "ModeratorVoteSummary",
+    "ModeratorCheckGameOverSummary",
     "ModeratorWarning",
     "ModeratorKeyAssignment",
     "ModeratorAskForDescription",
