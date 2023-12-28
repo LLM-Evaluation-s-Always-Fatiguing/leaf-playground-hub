@@ -1,7 +1,7 @@
 from typing import List
 
 import pandas as pd
-from leaf_playground.chart_tools.grouped_normalized_bar import GroupedNormalizedBar
+from leaf_playground.chart_tools.grouped_bar import GroupedBar
 from leaf_playground.core.scene_definition import CombinedMetricsData, SceneConfig
 from leaf_playground.core.workers import MetricEvaluatorConfig, Chart
 from leaf_playground.data.log_body import LogBody
@@ -16,7 +16,7 @@ class AccuracyChart(Chart, chart_name="accuracy", supported_metric_names=["exami
         evaluator_configs: List[MetricEvaluatorConfig],
         logs: List[LogBody]
     ) -> dict:
-        chart = GroupedNormalizedBar(mode="percent")
+        chart = GroupedBar(mode="percent")
 
         data = self._transform_data(metrics['metrics'])
 
