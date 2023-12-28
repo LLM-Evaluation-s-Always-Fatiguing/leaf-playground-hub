@@ -1,0 +1,765 @@
+{
+    "name": "mmlu",
+    "version": "0.1.0",
+    "metadata": {
+        "scene_metadata": {
+            "scene_definition": {
+                "name": "Mmlu",
+                "description": "using MMLU dataset to test and evaluate agents.",
+                "env_vars": [],
+                "roles": [
+                    {
+                        "name": "examiner",
+                        "description": "the one who prepares samples and sends to examinees.",
+                        "actions": [
+                            {
+                                "name": "prepare_samples",
+                                "description": "prepare samples based on dataset config.",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "ds_config",
+                                            "annotation": "<class 'mmlu.dataset_util.DatasetConfig'>"
+                                        }
+                                    ],
+                                    "return_annotation": "None",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            },
+                            {
+                                "name": "send_sample",
+                                "description": "pick one sample and broadcast to all examinees.",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "receivers",
+                                            "annotation": "typing.List[leaf_playground.data.profile.Profile]"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'mmlu.scene_definition.ExaminerSample'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": null
+                            }
+                        ],
+                        "num_agents_range": [
+                            1,
+                            1
+                        ],
+                        "is_static": true
+                    },
+                    {
+                        "name": "examinee",
+                        "description": "the one who receives samples sent by examiner and answer to those samples.",
+                        "actions": [
+                            {
+                                "name": "answer",
+                                "description": "answering the question sent by examiner",
+                                "signature": {
+                                    "parameters": [
+                                        {
+                                            "name": "self",
+                                            "annotation": "<class 'inspect._empty'>"
+                                        },
+                                        {
+                                            "name": "sample",
+                                            "annotation": "<class 'mmlu.scene_definition.ExaminerSample'>"
+                                        },
+                                        {
+                                            "name": "examiner",
+                                            "annotation": "<class 'leaf_playground.data.profile.Profile'>"
+                                        }
+                                    ],
+                                    "return_annotation": "<class 'mmlu.scene_definition.ExamineeAnswer'>",
+                                    "is_static_method": false
+                                },
+                                "metrics": [
+                                    {
+                                        "name": "accurate",
+                                        "description": "accuracy of examinee's answer",
+                                        "record_value_dtype": "BOOLEAN",
+                                        "record_display_type": "BooleanRadio",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "accuracy_fn",
+                                                "module": "mmlu.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    }
+                                ]
+                            }
+                        ],
+                        "num_agents_range": [
+                            1,
+                            -1
+                        ],
+                        "is_static": false
+                    }
+                ]
+            },
+            "config_schema": {
+                "$defs": {
+                    "AnswerActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "$ref": "#/$defs/AnswerActionMetricsConfig"
+                            }
+                        },
+                        "required": [
+                            "metrics_config"
+                        ],
+                        "title": "AnswerActionConfig",
+                        "type": "object"
+                    },
+                    "AnswerActionMetricsConfig": {
+                        "properties": {
+                            "accurate": {
+                                "$ref": "#/$defs/MetricConfig"
+                            }
+                        },
+                        "required": [
+                            "accurate"
+                        ],
+                        "title": "AnswerActionMetricsConfig",
+                        "type": "object"
+                    },
+                    "DatasetConfig": {
+                        "properties": {
+                            "dataset_name": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/DatasetName"
+                                    }
+                                ],
+                                "default": "abstract_algebra"
+                            },
+                            "dataset_split": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/DatasetSplit"
+                                    }
+                                ],
+                                "default": "test"
+                            },
+                            "num_samples": {
+                                "default": -1,
+                                "title": "Num Samples",
+                                "type": "integer"
+                            }
+                        },
+                        "title": "DatasetConfig",
+                        "type": "object"
+                    },
+                    "DatasetName": {
+                        "enum": [
+                            "all",
+                            "abstract_algebra",
+                            "anatomy",
+                            "astronomy",
+                            "business_ethics",
+                            "clinical_knowledge",
+                            "college_biology",
+                            "college_chemistry",
+                            "college_computer_science",
+                            "college_mathematics",
+                            "college_medicine",
+                            "college_physics",
+                            "computer_security",
+                            "conceptual_physics",
+                            "econometrics",
+                            "electrical_engineering",
+                            "elementary_mathematics",
+                            "formal_logic",
+                            "global_facts",
+                            "high_school_biology",
+                            "high_school_chemistry",
+                            "high_school_computer_science",
+                            "high_school_european_history",
+                            "high_school_geography",
+                            "high_school_government_and_politics",
+                            "high_school_macroeconomics",
+                            "high_school_mathematics",
+                            "high_school_microeconomics",
+                            "high_school_physics",
+                            "high_school_psychology",
+                            "high_school_statistics",
+                            "high_school_us_history",
+                            "high_school_world_history",
+                            "human_aging",
+                            "human_sexuality",
+                            "international_law",
+                            "jurisprudence",
+                            "logical_fallacies",
+                            "machine_learning",
+                            "management",
+                            "marketing",
+                            "medical_genetics",
+                            "miscellaneous",
+                            "moral_disputes",
+                            "moral_scenarios",
+                            "nutrition",
+                            "philosophy",
+                            "prehistory",
+                            "professional_accounting",
+                            "professional_law",
+                            "professional_medicine",
+                            "professional_psychology",
+                            "public_relations",
+                            "security_studies",
+                            "sociology",
+                            "us_foreign_policy",
+                            "virology",
+                            "world_religions"
+                        ],
+                        "title": "DatasetName",
+                        "type": "string"
+                    },
+                    "DatasetSplit": {
+                        "enum": [
+                            "dev",
+                            "test",
+                            "validation"
+                        ],
+                        "title": "DatasetSplit",
+                        "type": "string"
+                    },
+                    "DynamicObject": {
+                        "properties": {
+                            "obj": {
+                                "title": "Obj",
+                                "type": "string"
+                            },
+                            "module": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Module"
+                            },
+                            "source_file": {
+                                "anyOf": [
+                                    {
+                                        "format": "file-path",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Source File"
+                            }
+                        },
+                        "required": [
+                            "obj"
+                        ],
+                        "title": "DynamicObject",
+                        "type": "object"
+                    },
+                    "ExamineeRoleActionsConfig": {
+                        "properties": {
+                            "answer": {
+                                "$ref": "#/$defs/AnswerActionConfig"
+                            }
+                        },
+                        "required": [
+                            "answer"
+                        ],
+                        "title": "ExamineeRoleActionsConfig",
+                        "type": "object"
+                    },
+                    "ExamineeRoleConfig": {
+                        "properties": {
+                            "actions_config": {
+                                "$ref": "#/$defs/ExamineeRoleActionsConfig"
+                            },
+                            "agents_config": {
+                                "items": {
+                                    "$ref": "#/$defs/RoleAgentConfig"
+                                },
+                                "minItems": 1,
+                                "title": "Agents Config",
+                                "type": "array"
+                            },
+                            "is_static": {
+                                "const": false,
+                                "default": false,
+                                "title": "Is Static"
+                            }
+                        },
+                        "required": [
+                            "actions_config",
+                            "agents_config"
+                        ],
+                        "title": "ExamineeRoleConfig",
+                        "type": "object"
+                    },
+                    "ExaminerRoleActionsConfig": {
+                        "properties": {
+                            "prepare_samples": {
+                                "$ref": "#/$defs/PrepareSamplesActionConfig"
+                            },
+                            "send_sample": {
+                                "$ref": "#/$defs/SendSampleActionConfig"
+                            }
+                        },
+                        "required": [
+                            "prepare_samples",
+                            "send_sample"
+                        ],
+                        "title": "ExaminerRoleActionsConfig",
+                        "type": "object"
+                    },
+                    "ExaminerRoleConfig": {
+                        "properties": {
+                            "actions_config": {
+                                "$ref": "#/$defs/ExaminerRoleActionsConfig"
+                            },
+                            "agents_config": {
+                                "default": [
+                                    {
+                                        "config_data": {},
+                                        "obj_for_import": {
+                                            "module": "mmlu.agents.examiner",
+                                            "obj": "Examiner",
+                                            "source_file": null
+                                        }
+                                    }
+                                ],
+                                "items": {
+                                    "$ref": "#/$defs/RoleAgentConfig"
+                                },
+                                "maxItems": 1,
+                                "minItems": 1,
+                                "title": "Agents Config",
+                                "type": "array"
+                            },
+                            "is_static": {
+                                "const": true,
+                                "default": true,
+                                "title": "Is Static"
+                            }
+                        },
+                        "required": [
+                            "actions_config"
+                        ],
+                        "title": "ExaminerRoleConfig",
+                        "type": "object"
+                    },
+                    "MetricConfig": {
+                        "properties": {
+                            "enable": {
+                                "default": true,
+                                "title": "Enable",
+                                "type": "boolean"
+                            }
+                        },
+                        "title": "MetricConfig",
+                        "type": "object"
+                    },
+                    "MmluSceneRolesConfig": {
+                        "properties": {
+                            "examiner": {
+                                "$ref": "#/$defs/ExaminerRoleConfig"
+                            },
+                            "examinee": {
+                                "$ref": "#/$defs/ExamineeRoleConfig"
+                            }
+                        },
+                        "required": [
+                            "examiner",
+                            "examinee"
+                        ],
+                        "title": "MmluSceneRolesConfig",
+                        "type": "object"
+                    },
+                    "PrepareSamplesActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "PrepareSamplesActionConfig",
+                        "type": "object"
+                    },
+                    "RoleAgentConfig": {
+                        "properties": {
+                            "config_data": {
+                                "title": "Config Data",
+                                "type": "object"
+                            },
+                            "obj_for_import": {
+                                "$ref": "#/$defs/DynamicObject"
+                            }
+                        },
+                        "required": [
+                            "config_data",
+                            "obj_for_import"
+                        ],
+                        "title": "RoleAgentConfig",
+                        "type": "object"
+                    },
+                    "SendSampleActionConfig": {
+                        "properties": {
+                            "metrics_config": {
+                                "const": null,
+                                "default": null,
+                                "title": "Metrics Config"
+                            }
+                        },
+                        "title": "SendSampleActionConfig",
+                        "type": "object"
+                    }
+                },
+                "properties": {
+                    "env_vars_config": {
+                        "const": null,
+                        "default": null,
+                        "title": "Env Vars Config"
+                    },
+                    "roles_config": {
+                        "$ref": "#/$defs/MmluSceneRolesConfig"
+                    },
+                    "dataset_config": {
+                        "$ref": "#/$defs/DatasetConfig"
+                    }
+                },
+                "required": [
+                    "roles_config",
+                    "dataset_config"
+                ],
+                "title": "MmluSceneConfig",
+                "type": "object"
+            },
+            "obj_for_import": {
+                "obj": "MmluScene",
+                "module": "mmlu.scene",
+                "source_file": null
+            }
+        },
+        "agents_metadata": {
+            "examiner": [
+                {
+                    "cls_name": "Examiner",
+                    "description": "the one who prepares samples and sends to examinees.",
+                    "config_schema": null,
+                    "obj_for_import": {
+                        "obj": "Examiner",
+                        "module": "mmlu.agents.examiner",
+                        "source_file": null
+                    }
+                }
+            ],
+            "examinee": [
+                {
+                    "cls_name": "OpenAIBasicExaminee",
+                    "description": "Examinee agent using OpenAI API to answer questions",
+                    "config_schema": {
+                        "$defs": {
+                            "BackendConfig": {
+                                "properties": {
+                                    "model": {
+                                        "$ref": "#/$defs/Models"
+                                    },
+                                    "api_key": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Key"
+                                    },
+                                    "organization": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Organization"
+                                    },
+                                    "base_url": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Base Url"
+                                    },
+                                    "azure_endpoint": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Endpoint"
+                                    },
+                                    "azure_deployment": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Deployment"
+                                    },
+                                    "api_version": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Version"
+                                    },
+                                    "is_azure": {
+                                        "default": false,
+                                        "title": "Is Azure",
+                                        "type": "boolean"
+                                    },
+                                    "max_retries": {
+                                        "default": 2,
+                                        "title": "Max Retries",
+                                        "type": "integer"
+                                    },
+                                    "timeout": {
+                                        "default": 60,
+                                        "title": "Timeout",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "model"
+                                ],
+                                "title": "BackendConfig",
+                                "type": "object"
+                            },
+                            "Models": {
+                                "enum": [
+                                    "gpt-3.5-turbo",
+                                    "gpt-3.5-turbo-1106",
+                                    "gpt-3.5-turbo-16k",
+                                    "gpt-4-1106-preview",
+                                    "gpt-4-vision-preview",
+                                    "gpt-4",
+                                    "gpt-4-0613",
+                                    "gpt-4-32k",
+                                    "gpt-4-32k-0613"
+                                ],
+                                "title": "Models",
+                                "type": "string"
+                            },
+                            "Profile": {
+                                "properties": {
+                                    "id": {
+                                        "title": "Id",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/$defs/Role"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "title": "Profile",
+                                "type": "object"
+                            },
+                            "Role": {
+                                "properties": {
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "title": "Description",
+                                        "type": "string"
+                                    },
+                                    "is_static": {
+                                        "default": false,
+                                        "title": "Is Static",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "title": "Role",
+                                "type": "object"
+                            }
+                        },
+                        "properties": {
+                            "profile": {
+                                "$ref": "#/$defs/Profile"
+                            },
+                            "chart_major_color": {
+                                "anyOf": [
+                                    {
+                                        "pattern": "^#[0-9a-fA-F]{6}$",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Chart Major Color"
+                            },
+                            "ai_backend_config": {
+                                "$ref": "#/$defs/BackendConfig"
+                            }
+                        },
+                        "required": [
+                            "profile",
+                            "ai_backend_config"
+                        ],
+                        "title": "OpenAIBasicExamineeConfig",
+                        "type": "object"
+                    },
+                    "obj_for_import": {
+                        "obj": "OpenAIBasicExaminee",
+                        "module": "mmlu.agents.openai_basic_examinee",
+                        "source_file": null
+                    }
+                }
+            ]
+        },
+        "evaluators_metadata": [
+            {
+                "cls_name": "RegexEvaluator",
+                "description": "Regex evaluator (uses the specified regular expression to extract the answer, then compares it to the reference answer).",
+                "config_schema": {
+                    "$defs": {
+                        "RegexEvalToolConfig": {
+                            "properties": {
+                                "regex_rules": {
+                                    "default": [
+                                        "\\b([A-D])\\b"
+                                    ],
+                                    "description": "Regex rules for extracting answers from the scene.",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "title": "Regex Rules",
+                                    "type": "array"
+                                },
+                                "ignore_case": {
+                                    "default": true,
+                                    "description": "Whether to ignore case when matching regex rules and answers.",
+                                    "title": "Ignore Case",
+                                    "type": "boolean"
+                                }
+                            },
+                            "title": "RegexEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "regexEvalToolConfig": {
+                            "$ref": "#/$defs/RegexEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "regexEvalToolConfig"
+                    ],
+                    "title": "RegexEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "RegexEvaluator",
+                    "module": "mmlu.metric_evaluators.regex_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer.accurate"
+                ]
+            },
+            {
+                "cls_name": "SimpleEvaluator",
+                "description": "A simple evaluator (determines whether the answer starts with the reference answer, ignoring case sensitivity).",
+                "config_schema": {
+                    "properties": {},
+                    "title": "SimpleEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "SimpleEvaluator",
+                    "module": "mmlu.metric_evaluators.simple_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer.accurate"
+                ]
+            }
+        ],
+        "charts_metadata": [
+            {
+                "cls_name": "AccuracyChart",
+                "obj_for_import": {
+                    "obj": "AccuracyChart",
+                    "module": "mmlu.charts.accuracy",
+                    "source_file": null
+                },
+                "chart_name": "accuracy",
+                "supported_metric_names": [
+                    "examinee.answer.accurate"
+                ]
+            }
+        ]
+    },
+    "leaf_version": "0.2.0.dev0"
+}
