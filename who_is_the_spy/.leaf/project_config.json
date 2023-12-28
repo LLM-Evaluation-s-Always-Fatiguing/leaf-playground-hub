@@ -10,17 +10,17 @@
                     {
                         "name": "key_modality",
                         "description": "the modality of the key, i.e: text, image, audio, etc.",
-                        "env_var_cls": "KeyModalityEnvVar"
+                        "env_var_cls": "KeyModality"
                     },
                     {
-                        "name": "num_rounds",
-                        "description": "num rounds to play",
-                        "env_var_cls": "NumRoundsEnvVar"
+                        "name": "num_games",
+                        "description": "how many games to play",
+                        "env_var_cls": "NumGames"
                     },
                     {
                         "name": "has_blank",
                         "description": "whether the game has blank",
-                        "env_var_cls": "HasBlankEnvVar"
+                        "env_var_cls": "HasBlank"
                     }
                 ],
                 "roles": [
@@ -638,7 +638,7 @@
                         "title": "ModeratorRoleConfig",
                         "type": "object"
                     },
-                    "NumRoundsEnvVarConfig": {
+                    "NumGamesEnvVarConfig": {
                         "properties": {
                             "current_value": {
                                 "default": 1,
@@ -646,7 +646,7 @@
                                 "type": "integer"
                             }
                         },
-                        "title": "NumRoundsEnvVarConfig",
+                        "title": "NumGamesEnvVarConfig",
                         "type": "object"
                     },
                     "PlayerRoleActionsConfig": {
@@ -814,8 +814,8 @@
                             "key_modality": {
                                 "$ref": "#/$defs/KeyModalityEnvVarConfig"
                             },
-                            "num_rounds": {
-                                "$ref": "#/$defs/NumRoundsEnvVarConfig"
+                            "num_games": {
+                                "$ref": "#/$defs/NumGamesEnvVarConfig"
                             },
                             "has_blank": {
                                 "$ref": "#/$defs/HasBlankEnvVarConfig"
@@ -823,7 +823,7 @@
                         },
                         "required": [
                             "key_modality",
-                            "num_rounds",
+                            "num_games",
                             "has_blank"
                         ],
                         "title": "WhoisthespySceneEnvVarsConfig",

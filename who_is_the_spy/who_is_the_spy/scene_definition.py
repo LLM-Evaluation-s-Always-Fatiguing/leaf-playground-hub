@@ -36,15 +36,15 @@ class KeyModalities(Enum):
 KeyTypes = Annotated[Union[Text, Image, Audio], Field(discriminator="type")]
 
 
-class KeyModalityEnvVar(ConstantEnvironmentVariable):
+class KeyModality(ConstantEnvironmentVariable):
     current_value: KeyModalities = Field(default=KeyModalities.TEXT)
 
 
-class NumRoundsEnvVar(ConstantEnvironmentVariable):
+class NumGames(ConstantEnvironmentVariable):
     current_value: int = Field(default=1)
 
 
-class HasBlankEnvVar(ConstantEnvironmentVariable):
+class HasBlank(ConstantEnvironmentVariable):
     current_value: bool = Field(default=False)
 
 
@@ -453,17 +453,17 @@ SCENE_DEFINITION = SceneDefinition(
         EnvVarDefinition(
             name="key_modality",
             description="the modality of the key, i.e: text, image, audio, etc.",
-            env_var_cls=KeyModalityEnvVar
+            env_var_cls=KeyModality
         ),
         EnvVarDefinition(
-            name="num_rounds",
-            description="num rounds to play",
-            env_var_cls=NumRoundsEnvVar
+            name="num_games",
+            description="how many games to play",
+            env_var_cls=NumGames
         ),
         EnvVarDefinition(
             name="has_blank",
             description="whether the game has blank",
-            env_var_cls=HasBlankEnvVar
+            env_var_cls=HasBlank
         )
     ]
 )
@@ -475,9 +475,9 @@ __all__ = [
     "PlayerRoles",
     "PlayerStatus",
     "KeyModalities",
-    "KeyModalityEnvVar",
-    "HasBlankEnvVar",
-    "NumRoundsEnvVar",
+    "KeyModality",
+    "HasBlank",
+    "NumGames",
     "PlayerDescription",
     "PlayerPrediction",
     "PlayerVote",

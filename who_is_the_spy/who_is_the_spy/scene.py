@@ -1,6 +1,6 @@
 import asyncio
 import random
-from typing import List, Optional
+from typing import List, Optional, Type
 
 from pydantic import Field
 
@@ -18,6 +18,8 @@ from .scene_definition import *
 class WhoIsTheSpyLogBody(ActionLogBody):
     references: Optional[List[MessageTypes]] = Field(default=None)
     response: MessageTypes = Field(default=...)
+    game_id: int = Field(default=...)
+    round_id: int = Field(default=...)
 
 
 WhoIsTheSpySceneConfig = SceneConfig.create_config_model(
@@ -31,6 +33,8 @@ WhoIsTheSpySceneConfig = SceneConfig.create_config_model(
 class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=WhoIsTheSpyLogBody):
     config_cls = WhoIsTheSpySceneConfig
     config: config_cls
+
+    log_body_class: Type[WhoIsTheSpyLogBody]
 
     def __init__(self, config: config_cls, logger: Logger):
         super().__init__(config=config, logger=logger)
@@ -49,7 +53,9 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                     references=references,
                     response=message,
                     log_msg=log_msg,
-                    action_belonged_chain=action_belonged_chain
+                    action_belonged_chain=action_belonged_chain,
+                    game_id=game_id,
+                    round_id=round_id
                 )
             )
 
@@ -161,8 +167,11 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
             )
             return vote
 
-        num_rounds = self.env_vars["num_rounds"].current_value
-        while num_rounds:
+        num_games = self.env_vars["num_games"].current_value
+        game_id = 0
+        while num_games:
+            round_id = 0
+
             players = self.players
             random.shuffle(players)  # shuffle to randomize the speak order
 
@@ -208,7 +217,8 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
             )
 
             # run game
-            while True:  # for each turn
+            while True:  # for each round
+                round_id += 1
                 # 1. ask players to give a description for the key they got sequentially,
                 #    then validate player's prediction
                 await players_describe_key(players)
@@ -277,7 +287,8 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                     player for player in players if self.moderator.id2status[player.id] == PlayerStatus.ALIVE
                 ]
 
-            num_rounds -= 1
+            num_games -= 1
+            game_id += 1
 
 
 __all__ = [
