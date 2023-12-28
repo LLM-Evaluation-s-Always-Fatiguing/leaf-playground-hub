@@ -521,8 +521,12 @@
                         "type": "object"
                     },
                     "KeyModalities": {
-                        "const": "text",
-                        "title": "KeyModalities"
+                        "enum": [
+                            "text",
+                            "image"
+                        ],
+                        "title": "KeyModalities",
+                        "type": "string"
                     },
                     "KeyModalityEnvVarConfig": {
                         "properties": {
@@ -882,20 +886,10 @@
                     "description": "An AI agent using OpenAI as backend, participants in the game Who is the Spy as a player",
                     "config_schema": {
                         "$defs": {
-                            "OpenAIBackendConfig": {
+                            "BackendConfig": {
                                 "properties": {
                                     "model": {
                                         "enum": [
-                                            "babbage-002",
-                                            "davinci-002",
-                                            "gpt-3.5-turbo-instruct",
-                                            "text-davinci-003",
-                                            "text-davinci-002",
-                                            "text-davinci-001",
-                                            "code-davinci-002",
-                                            "text-curie-001",
-                                            "text-babbage-001",
-                                            "text-ada-001",
                                             "gpt-4-1106-preview",
                                             "gpt-4-vision-preview",
                                             "gpt-4",
@@ -1004,7 +998,7 @@
                                 "required": [
                                     "model"
                                 ],
-                                "title": "OpenAIBackendConfig",
+                                "title": "BackendConfig",
                                 "type": "object"
                             },
                             "Profile": {
@@ -1077,7 +1071,7 @@
                                 "title": "Chart Major Color"
                             },
                             "ai_backend_config": {
-                                "$ref": "#/$defs/OpenAIBackendConfig"
+                                "$ref": "#/$defs/BackendConfig"
                             }
                         },
                         "required": [

@@ -722,7 +722,7 @@
                     "module": "general_mcq_examine.charts.accuracy",
                     "source_file": null
                 },
-                "chart_name": "bar",
+                "chart_name": "accuracy",
                 "supported_metric_names": [
                     "examinee.answer_question.accurate"
                 ]
