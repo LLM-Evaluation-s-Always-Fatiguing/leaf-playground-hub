@@ -29,7 +29,6 @@ class ExamineeAnswer(TextMessage):
 
 MessageType = Annotated[Union[ExaminerSample, ExamineeAnswer], Field(discriminator="msg_type")]
 
-
 SCENE_DEFINITION = SceneDefinition(
     name="Mmlu",
     description="using MMLU dataset to test and evaluate agents.",
@@ -108,7 +107,6 @@ SCENE_DEFINITION = SceneDefinition(
     ],
     env_vars=[]
 )
-
 
 __all__ = [
     "ExaminerSample",
