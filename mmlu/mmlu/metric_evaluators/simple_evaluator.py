@@ -3,8 +3,6 @@ from typing import Any, Dict, List
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
 from leaf_playground.data.log_body import ActionLogBody
-from leaf_playground.eval_tools.regex import RegexEvalTool, RegexEvalToolConfig
-from pydantic import Field
 
 from ..scene_definition import ExamineeAnswer, SCENE_DEFINITION
 
