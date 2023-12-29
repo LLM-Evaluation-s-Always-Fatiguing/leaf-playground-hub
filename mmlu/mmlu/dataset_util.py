@@ -9,7 +9,6 @@ from pydantic import Field
 
 from leaf_playground._config import _Config
 
-
 DS_PATH = "cais/mmlu"
 DS_SPLITS = Enum(
     'DatasetSplit',
@@ -19,8 +18,8 @@ DS_NAMES = Enum(
     'DatasetName',
     {
         n: n for n in json.load(
-            open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ds_names.json"), "r", encoding="utf-8")
-        )
+        open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ds_names.json"), "r", encoding="utf-8")
+    )
     }
 )
 QUESTION_COL = "question"
@@ -39,14 +38,16 @@ class DatasetConfig(_Config):
 
 def prepare_samples(ds_config: DatasetConfig) -> List[Dict[str, str]]:
     def preprocess(samples):
+        sys_msg = f"The following are multiple choice questions (with answers) about {ds_config.dataset_name.value}."
         questions = samples["question"]
+
         choices = [
             "\n".join([f"{chr(65 + i)}: {c}" for i, c in enumerate(choice)])
             for choice in samples["choices"]
         ]
 
         new_questions = [
-            f"## Request\n\n{question}\n\n## Choices\n\n{choice}" for question, choice in zip(questions, choices)
+            f"{sys_msg}\n\n{question}\n{choice}" for question, choice in zip(questions, choices)
         ]
 
         return {"question": new_questions, "answer": samples["answer"]}
