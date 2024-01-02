@@ -540,7 +540,8 @@
                         "obj": "Examiner",
                         "module": "rag_qa.agents.examiner",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
                 }
             ],
             "examinee": [
@@ -758,7 +759,8 @@
                         "obj": "OpenAIBasicExaminee",
                         "module": "rag_qa.agents.openai_basic_examinee",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
                 }
             ]
         },
@@ -789,5 +791,5 @@
         ],
         "charts_metadata": null
     },
-    "leaf_version": "0.2.0.dev0"
+    "leaf_version": "0.3.0.dev0"
 }
