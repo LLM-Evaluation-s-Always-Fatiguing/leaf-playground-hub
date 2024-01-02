@@ -3,6 +3,7 @@ from typing import List
 
 from leaf_playground.data.profile import Profile
 from leaf_playground.core.scene_agent import SceneAIAgentConfig, SceneAIAgent
+from leaf_playground.core.scene_definition import RoleDefinition
 
 from ..scene_definition import *
 
@@ -48,6 +49,7 @@ class BaseAIPlayer(
 
 
 __all__ = [
+    "ROLE_DEFINITION",
     "BaseAIPlayerConfig",
     "BaseAIPlayer"
 ]

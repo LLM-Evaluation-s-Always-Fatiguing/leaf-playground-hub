@@ -868,19 +868,95 @@
             }
         },
         "agents_metadata": {
-            "moderator": [
-                {
-                    "cls_name": "Moderator",
-                    "description": "An agent who moderate the game: Who is the Spy",
-                    "config_schema": null,
-                    "obj_for_import": {
-                        "obj": "Moderator",
-                        "module": "who_is_the_spy.agents.moderator",
-                        "source_file": null
-                    }
-                }
-            ],
             "player": [
+                {
+                    "cls_name": "HumanPlayer",
+                    "description": "A human who participants in the game Who is the Spy as a player",
+                    "config_schema": {
+                        "$defs": {
+                            "Profile": {
+                                "properties": {
+                                    "id": {
+                                        "title": "Id",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/$defs/Role"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "title": "Profile",
+                                "type": "object"
+                            },
+                            "Role": {
+                                "properties": {
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "title": "Description",
+                                        "type": "string"
+                                    },
+                                    "is_static": {
+                                        "default": false,
+                                        "title": "Is Static",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "title": "Role",
+                                "type": "object"
+                            }
+                        },
+                        "properties": {
+                            "profile": {
+                                "$ref": "#/$defs/Profile"
+                            },
+                            "chart_major_color": {
+                                "anyOf": [
+                                    {
+                                        "pattern": "^#[0-9a-fA-F]{6}$",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Chart Major Color"
+                            }
+                        },
+                        "required": [
+                            "profile"
+                        ],
+                        "title": "HumanPlayerConfig",
+                        "type": "object"
+                    },
+                    "obj_for_import": {
+                        "obj": "HumanPlayer",
+                        "module": "who_is_the_spy.agents.human_player",
+                        "source_file": null
+                    },
+                    "is_human": true
+                },
                 {
                     "cls_name": "OpenAIBasicPlayer",
                     "description": "An AI agent using OpenAI as backend, participants in the game Who is the Spy as a player",
@@ -1085,12 +1161,26 @@
                         "obj": "OpenAIBasicPlayer",
                         "module": "who_is_the_spy.agents.openai_basic_player",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
+                }
+            ],
+            "moderator": [
+                {
+                    "cls_name": "Moderator",
+                    "description": "An agent who moderate the game: Who is the Spy",
+                    "config_schema": null,
+                    "obj_for_import": {
+                        "obj": "Moderator",
+                        "module": "who_is_the_spy.agents.moderator",
+                        "source_file": null
+                    },
+                    "is_human": false
                 }
             ]
         },
         "evaluators_metadata": null,
         "charts_metadata": null
     },
-    "leaf_version": "0.2.0.dev0"
+    "leaf_version": "0.3.0.dev0"
 }

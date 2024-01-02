@@ -1,6 +1,6 @@
 import asyncio
 import random
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Union
 
 from pydantic import Field
 
@@ -12,7 +12,11 @@ from leaf_playground.data.media import Text
 
 from .agents.moderator import Moderator
 from .agents.player import BaseAIPlayer
+from .agents.human_player import HumanPlayer
 from .scene_definition import *
+
+
+Player = Union[BaseAIPlayer, HumanPlayer]
 
 
 class WhoIsTheSpyLogBody(ActionLogBody):
@@ -40,7 +44,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
         super().__init__(config=config, logger=logger)
 
         self.moderator: Moderator = self.static_agents["moderator"][0]
-        self.players: List[BaseAIPlayer] = self.agents["player"]
+        self.players: List[Player] = self.agents["player"]
 
     async def _run(self):
         def put_message(message: MessageTypes, log_msg: str, action_belonged_chain: Optional[str] = None):
@@ -59,7 +63,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                 )
             )
 
-        async def player_receive_key(player: BaseAIPlayer) -> None:
+        async def player_receive_key(player: Player) -> None:
             history = self.message_pool.get_messages(player.profile)
             key_assignment_msg: ModeratorKeyAssignment = history[-1]
             try:
@@ -68,7 +72,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                 if self.config.debug_mode:
                     raise
 
-        async def player_describe_key(player_: BaseAIPlayer) -> PlayerDescription:
+        async def player_describe_key(player_: Player) -> PlayerDescription:
             history = self.message_pool.get_messages(player_.profile)
             try:
                 description = await player_.describe_key(
@@ -89,7 +93,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
             )
             return description.model_copy(deep=True)
 
-        async def player_describe_with_validation(player_: BaseAIPlayer):
+        async def player_describe_with_validation(player_: Player):
             description = await player_describe_key(player_)
             patience_ = 3
             while patience_:
@@ -110,7 +114,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
 
             return description
 
-        async def players_describe_key(players_: List[BaseAIPlayer]):
+        async def players_describe_key(players_: List[Player]):
             put_message(
                 self.moderator.ask_for_key_description(),
                 log_msg=f"{self.moderator.name} asks players to describe keys they get.",
@@ -129,7 +133,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                     action_belonged_chain=player_.role_definition.get_action_definition("describe_key").belonged_chain
                 )  # public to all players
 
-        async def player_predict_role(player_: BaseAIPlayer) -> PlayerPrediction:
+        async def player_predict_role(player_: Player) -> PlayerPrediction:
             history = self.message_pool.get_messages(player_.profile)
             try:
                 prediction = await player_.predict_role(history, self.moderator.profile)
@@ -148,7 +152,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
             )
             return prediction
 
-        async def player_vote(player_: BaseAIPlayer) -> PlayerVote:
+        async def player_vote(player_: Player) -> PlayerVote:
             history = self.message_pool.get_messages(player_.profile)
             try:
                 vote = await player_.vote(history, self.moderator.profile)
