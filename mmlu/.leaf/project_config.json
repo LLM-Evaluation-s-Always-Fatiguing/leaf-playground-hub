@@ -467,7 +467,8 @@
                         "obj": "Examiner",
                         "module": "mmlu.agents.examiner",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
                 }
             ],
             "examinee": [
@@ -674,7 +675,8 @@
                         "obj": "OpenAIBasicExaminee",
                         "module": "mmlu.agents.openai_basic_examinee",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
                 }
             ]
         },
@@ -761,5 +763,5 @@
             }
         ]
     },
-    "leaf_version": "0.2.0.dev0"
+    "leaf_version": "0.3.0.dev0"
 }
