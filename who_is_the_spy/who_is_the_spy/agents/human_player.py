@@ -28,7 +28,7 @@ class HumanPlayer(
         pass
 
     async def describe_key(self, history: List[MessageTypes], receivers: List[Profile]) -> PlayerDescription:
-        description = await self.wait_human_text_input()
+        description = (await self.wait_human_text_input()) or ""
         return PlayerDescription(
             sender=self.profile,
             receivers=receivers,
@@ -36,7 +36,7 @@ class HumanPlayer(
         )
 
     async def predict_role(self, history: List[MessageTypes], moderator: Profile) -> PlayerPrediction:
-        prediction = await self.wait_human_text_input()
+        prediction = (await self.wait_human_text_input()) or ""
         return PlayerPrediction(
             sender=self.profile,
             receivers=[moderator, self.profile],
@@ -44,7 +44,7 @@ class HumanPlayer(
         )
 
     async def vote(self, history: List[MessageTypes], moderator: Profile) -> PlayerVote:
-        vote = await self.wait_human_text_input()
+        vote = (await self.wait_human_text_input()) or ""
         return PlayerVote(
             sender=self.profile,
             receivers=[moderator, self.profile],
