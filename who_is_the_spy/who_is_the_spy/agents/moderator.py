@@ -160,7 +160,19 @@ class Moderator(
             [f"- {role.value} :: {[f'{player.name}({player.id})' for player in players]}"
              for role, players in self.role2players.items()]
         )
-        key_assign_summary = f"- civilian :: {self.civilian_key}\n- spy :: {self.spy_key}"
+        if key_modality == KeyModalities.TEXT:
+            key_assign_summary = f"- civilian :: {self.civilian_key.text}\n- spy :: {self.spy_key.text}"
+        elif key_modality == KeyModalities.IMAGE:
+            key_assign_summary = (
+                f"""
+                <figure>
+                <img src="{self.civilian_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="256" height="256"/>
+                <img src="{self.spy_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="256" height="256"/>
+                </figure>
+                """
+            )
+        else:
+            raise NotImplementedError(f"[{key_modality.value}] modal not supported yet.")
         msg = (
             f"## Roles and Keys assignment Results\n\n"
             f"### Roles\n{role_assign_summary}\n\n### Keys\n{key_assign_summary}"
