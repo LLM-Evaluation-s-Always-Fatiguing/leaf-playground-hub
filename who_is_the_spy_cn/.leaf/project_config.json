@@ -1,5 +1,5 @@
 {
-    "name": "who_is_the_spy",
+    "name": "who_is_the_spy_cn",
     "version": "0.1.0",
     "metadata": {
         "scene_metadata": {
@@ -57,7 +57,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorInitGameSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorInitGameSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -72,7 +72,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -87,7 +87,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -106,7 +106,7 @@
                                             "annotation": "<class 'leaf_playground.data.profile.Profile'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorKeyAssignment'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorKeyAssignment'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -121,7 +121,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorAskForDescription'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorAskForDescription'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -137,10 +137,10 @@
                                         },
                                         {
                                             "name": "description",
-                                            "annotation": "<class 'who_is_the_spy.scene_definition.PlayerDescription'>"
+                                            "annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerDescription'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorWarning'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorWarning'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -155,7 +155,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorAskForRolePrediction'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorAskForRolePrediction'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -171,10 +171,10 @@
                                         },
                                         {
                                             "name": "predictions",
-                                            "annotation": "typing.List[who_is_the_spy.scene_definition.PlayerPrediction]"
+                                            "annotation": "typing.List[who_is_the_spy_cn.scene_definition.PlayerPrediction]"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorPredictionSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorPredictionSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -189,7 +189,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorAskForVote'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorAskForVote'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -205,14 +205,14 @@
                                         },
                                         {
                                             "name": "votes",
-                                            "annotation": "typing.List[who_is_the_spy.scene_definition.PlayerVote]"
+                                            "annotation": "typing.List[who_is_the_spy_cn.scene_definition.PlayerVote]"
                                         },
                                         {
                                             "name": "focused_players",
                                             "annotation": "typing.Optional[typing.List[leaf_playground.data.profile.Profile]]"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorVoteSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorVoteSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -227,7 +227,7 @@
                                             "annotation": "<class 'inspect._empty'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorCheckGameOverSummary'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -269,7 +269,7 @@
                                         },
                                         {
                                             "name": "key_assignment",
-                                            "annotation": "<class 'who_is_the_spy.scene_definition.ModeratorKeyAssignment'>"
+                                            "annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorKeyAssignment'>"
                                         }
                                     ],
                                     "return_annotation": "None",
@@ -288,14 +288,14 @@
                                         },
                                         {
                                             "name": "history",
-                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorInitGameSummary, who_is_the_spy.scene_definition.ModeratorPredictionSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy_cn.scene_definition.ModeratorSummary, who_is_the_spy_cn.scene_definition.ModeratorInitGameSummary, who_is_the_spy_cn.scene_definition.ModeratorPredictionSummary, who_is_the_spy_cn.scene_definition.ModeratorVoteSummary, who_is_the_spy_cn.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy_cn.scene_definition.ModeratorKeyAssignment, who_is_the_spy_cn.scene_definition.ModeratorWarning, who_is_the_spy_cn.scene_definition.ModeratorAskForDescription, who_is_the_spy_cn.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy_cn.scene_definition.ModeratorAskForVote, who_is_the_spy_cn.scene_definition.PlayerDescription, who_is_the_spy_cn.scene_definition.PlayerPrediction, who_is_the_spy_cn.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
                                         },
                                         {
                                             "name": "receivers",
                                             "annotation": "typing.List[leaf_playground.data.profile.Profile]"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.PlayerDescription'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerDescription'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -311,14 +311,14 @@
                                         },
                                         {
                                             "name": "history",
-                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorInitGameSummary, who_is_the_spy.scene_definition.ModeratorPredictionSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy_cn.scene_definition.ModeratorSummary, who_is_the_spy_cn.scene_definition.ModeratorInitGameSummary, who_is_the_spy_cn.scene_definition.ModeratorPredictionSummary, who_is_the_spy_cn.scene_definition.ModeratorVoteSummary, who_is_the_spy_cn.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy_cn.scene_definition.ModeratorKeyAssignment, who_is_the_spy_cn.scene_definition.ModeratorWarning, who_is_the_spy_cn.scene_definition.ModeratorAskForDescription, who_is_the_spy_cn.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy_cn.scene_definition.ModeratorAskForVote, who_is_the_spy_cn.scene_definition.PlayerDescription, who_is_the_spy_cn.scene_definition.PlayerPrediction, who_is_the_spy_cn.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
                                         },
                                         {
                                             "name": "moderator",
                                             "annotation": "<class 'leaf_playground.data.profile.Profile'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.PlayerPrediction'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerPrediction'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -334,14 +334,14 @@
                                         },
                                         {
                                             "name": "history",
-                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy.scene_definition.ModeratorSummary, who_is_the_spy.scene_definition.ModeratorInitGameSummary, who_is_the_spy.scene_definition.ModeratorPredictionSummary, who_is_the_spy.scene_definition.ModeratorVoteSummary, who_is_the_spy.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy.scene_definition.ModeratorKeyAssignment, who_is_the_spy.scene_definition.ModeratorWarning, who_is_the_spy.scene_definition.ModeratorAskForDescription, who_is_the_spy.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy.scene_definition.ModeratorAskForVote, who_is_the_spy.scene_definition.PlayerDescription, who_is_the_spy.scene_definition.PlayerPrediction, who_is_the_spy.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
+                                            "annotation": "typing.List[typing.Annotated[typing.Union[who_is_the_spy_cn.scene_definition.ModeratorSummary, who_is_the_spy_cn.scene_definition.ModeratorInitGameSummary, who_is_the_spy_cn.scene_definition.ModeratorPredictionSummary, who_is_the_spy_cn.scene_definition.ModeratorVoteSummary, who_is_the_spy_cn.scene_definition.ModeratorCheckGameOverSummary, who_is_the_spy_cn.scene_definition.ModeratorKeyAssignment, who_is_the_spy_cn.scene_definition.ModeratorWarning, who_is_the_spy_cn.scene_definition.ModeratorAskForDescription, who_is_the_spy_cn.scene_definition.ModeratorAskForRolePrediction, who_is_the_spy_cn.scene_definition.ModeratorAskForVote, who_is_the_spy_cn.scene_definition.PlayerDescription, who_is_the_spy_cn.scene_definition.PlayerPrediction, who_is_the_spy_cn.scene_definition.PlayerVote], FieldInfo(annotation=NoneType, required=True, discriminator='msg_type')]]"
                                         },
                                         {
                                             "name": "moderator",
                                             "annotation": "<class 'leaf_playground.data.profile.Profile'>"
                                         }
                                     ],
-                                    "return_annotation": "<class 'who_is_the_spy.scene_definition.PlayerVote'>",
+                                    "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerVote'>",
                                     "is_static_method": false
                                 },
                                 "metrics": null
@@ -612,7 +612,7 @@
                                     {
                                         "config_data": {},
                                         "obj_for_import": {
-                                            "module": "who_is_the_spy.agents.moderator",
+                                            "module": "who_is_the_spy_cn.agents.moderator",
                                             "obj": "Moderator",
                                             "source_file": null
                                         }
@@ -863,7 +863,7 @@
             },
             "obj_for_import": {
                 "obj": "WhoIsTheSpyScene",
-                "module": "who_is_the_spy.scene",
+                "module": "who_is_the_spy_cn.scene",
                 "source_file": null
             }
         },
@@ -875,7 +875,7 @@
                     "config_schema": null,
                     "obj_for_import": {
                         "obj": "Moderator",
-                        "module": "who_is_the_spy.agents.moderator",
+                        "module": "who_is_the_spy_cn.agents.moderator",
                         "source_file": null
                     }
                 }
@@ -1083,7 +1083,7 @@
                     },
                     "obj_for_import": {
                         "obj": "OpenAIBasicPlayer",
-                        "module": "who_is_the_spy.agents.openai_basic_player",
+                        "module": "who_is_the_spy_cn.agents.openai_basic_player",
                         "source_file": null
                     }
                 }
