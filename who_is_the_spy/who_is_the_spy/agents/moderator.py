@@ -168,11 +168,11 @@ class Moderator(
                 <div style="width:100%;display:flex;flex-direction:row;justify-content:flex-start;align-items:flex-start;">
                 <figure>
                 <figcaption>Civilian</figcaption>
-                < img src="{self.civilian_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
+                <img src="{self.civilian_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
                 </figure>
                 <figure>
                 <figcaption>Spy</figcaption>
-                < img src="{self.spy_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
+                <img src="{self.spy_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
                 </figure>
                 </div>
                 """.strip()
