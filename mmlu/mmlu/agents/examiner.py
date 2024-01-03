@@ -27,7 +27,7 @@ class Examiner(
         self._questions = []
         self._ds_config: DatasetConfig = None
 
-    def prepare_samples(
+    async def prepare_samples(
             self,
             ds_config: DatasetConfig,
     ) -> None:
@@ -35,7 +35,7 @@ class Examiner(
         self._questions = prepare_samples(ds_config)
         self._ds_config = ds_config
 
-    def send_sample(self, receivers: List[Profile]) -> ExaminerSample:
+    async def send_sample(self, receivers: List[Profile]) -> ExaminerSample:
         sample = ExaminerSample(
             sender=self.profile,
             receivers=receivers,

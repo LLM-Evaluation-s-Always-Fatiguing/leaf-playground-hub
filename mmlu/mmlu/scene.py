@@ -67,9 +67,9 @@ class MmluScene(
             self.logger.add_log(log)
             self.notify_evaluators_record(log)
 
-        self.examiner.prepare_samples(self.config.dataset_config)
+        await self.examiner.prepare_samples(self.config.dataset_config)
         while not self.examiner.check_examine_finish():
-            sample: ExaminerSample = self.examiner.send_sample(
+            sample: ExaminerSample = await self.examiner.send_sample(
                 receivers=[examinee.profile for examinee in self.examinees]
             )
             self.message_pool.put_message(sample)
