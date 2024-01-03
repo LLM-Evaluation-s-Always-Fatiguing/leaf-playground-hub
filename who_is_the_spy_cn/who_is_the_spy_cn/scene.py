@@ -80,7 +80,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                 description = PlayerDescription(
                     sender=player_.profile,
                     receivers=[self.moderator.profile],
-                    content=Text(text="I have nothing to say.")
+                    content=Text(text="我无话可说。")
                 )
             put_message(
                 message=description,
