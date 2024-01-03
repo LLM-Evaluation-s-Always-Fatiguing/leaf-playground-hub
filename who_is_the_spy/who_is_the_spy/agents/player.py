@@ -44,7 +44,7 @@ class BaseAIPlayer(
         pass
 
     @abstractmethod
-    def reset_inner_status(self):
+    async def reset_inner_status(self):
         pass
 
 

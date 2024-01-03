@@ -51,7 +51,7 @@ class HumanPlayer(
             content=Text(text=vote, display_text=vote)
         )
 
-    def reset_inner_status(self):
+    async def reset_inner_status(self):
         pass
 
 
