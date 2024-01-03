@@ -82,10 +82,10 @@ class OpenAIBasicPlayer(
                     f"prediction.\n"
                     f"- vote to eliminate one player: in the voting stage, you should vote one player to be "
                     f"eliminated, DO NOT vote yourself, your goal is to survive till the last round."'''
-                    f"你是一名游戏高手，非常擅长分析推理和伪装。你正在参与一场游戏：谁是卧底。游戏的赢家可以瓜分1000美元奖金。"
-                    f"你的名字是 {self.name}，在这场游戏中会有一名主持人和其他玩家。"
-                    f"必须记住，你是 {self.name}， 不是主持人或者其他玩家。"
-                )
+                            f"你是一名游戏高手，非常擅长分析推理和伪装。你正在参与一场游戏：谁是卧底。游戏的赢家可以瓜分1000美元奖金。"
+                            f"你的名字是 {self.name}，在这场游戏中会有一名主持人和其他玩家。"
+                            f"必须记住，你是 {self.name}， 不是主持人或者其他玩家。"
+                            )
             },
             {"role": "system", "content": history[0].content.text}
         ]
@@ -142,7 +142,11 @@ class OpenAIBasicPlayer(
         # TODO: audio modal
 
     async def describe_key(self, history: List[MessageTypes], receivers: List[Profile]) -> PlayerDescription:
-        description = await self._respond(history)
+        try:
+            description = await self._respond(history)
+        except Exception as e:
+            print(e)
+            description = "我不知道该说什么了，你们自己看着办吧。"
         return PlayerDescription(
             sender=self.profile,
             receivers=receivers,
