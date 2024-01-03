@@ -3,6 +3,7 @@ from typing import List
 
 from leaf_playground.data.profile import Profile
 from leaf_playground.core.scene_agent import SceneAIAgentConfig, SceneAIAgent
+from leaf_playground.core.scene_definition import RoleDefinition
 
 from ..scene_definition import *
 
@@ -43,11 +44,12 @@ class BaseAIPlayer(
         pass
 
     @abstractmethod
-    def reset_inner_status(self):
+    async def reset_inner_status(self):
         pass
 
 
 __all__ = [
+    "ROLE_DEFINITION",
     "BaseAIPlayerConfig",
     "BaseAIPlayer"
 ]

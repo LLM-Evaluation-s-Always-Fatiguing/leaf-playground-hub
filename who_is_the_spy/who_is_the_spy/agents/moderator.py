@@ -98,12 +98,12 @@ class Moderator(
         self.civilian_key: KeyTypes = None
         self.spy_key: KeyTypes = None
 
-    def registry_players(self, players: List[Profile]) -> None:
+    async def registry_players(self, players: List[Profile]) -> None:
         for player in players:
             self.id2player[player.id] = player
             self.id2status[player.id] = PlayerStatus.ALIVE
 
-    def init_game(self) -> ModeratorInitGameSummary:
+    async def init_game(self) -> ModeratorInitGameSummary:
         num_players = len(self.id2player)
         has_blank = self.env_var["has_blank"].current_value
         key_modality = self.env_var["key_modality"].current_value
@@ -160,7 +160,25 @@ class Moderator(
             [f"- {role.value} :: {[f'{player.name}({player.id})' for player in players]}"
              for role, players in self.role2players.items()]
         )
-        key_assign_summary = f"- civilian :: {self.civilian_key}\n- spy :: {self.spy_key}"
+        if key_modality == KeyModalities.TEXT:
+            key_assign_summary = f"- civilian :: {self.civilian_key.text}\n- spy :: {self.spy_key.text}"
+        elif key_modality == KeyModalities.IMAGE:
+            key_assign_summary = (
+                f"""
+                <div style="width:100%;display:flex;flex-direction:row;justify-content:flex-start;align-items:flex-start;">
+                <figure>
+                <figcaption>Civilian</figcaption>
+                <img src="{self.civilian_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
+                </figure>
+                <figure>
+                <figcaption>Spy</figcaption>
+                <img src="{self.spy_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
+                </figure>
+                </div>
+                """.strip()
+            )
+        else:
+            raise NotImplementedError(f"[{key_modality.value}] modal not supported yet.")
         msg = (
             f"## Roles and Keys assignment Results\n\n"
             f"### Roles\n{role_assign_summary}\n\n### Keys\n{key_assign_summary}"
@@ -173,7 +191,7 @@ class Moderator(
             keys={"civilian": self.civilian_key.display_text, "spy": self.spy_key.display_text}
         )
 
-    def introduce_game_rule(self) -> ModeratorSummary:
+    async def introduce_game_rule(self) -> ModeratorSummary:
         has_blank = self.env_var["has_blank"].current_value
         msg = self.game_rule_with_blank if has_blank else self.game_rule_without_blank
         return ModeratorSummary(
@@ -182,7 +200,7 @@ class Moderator(
             content=Text(text=msg, display_text=msg)
         )
 
-    def announce_game_start(self) -> ModeratorSummary:
+    async def announce_game_start(self) -> ModeratorSummary:
         num_players = len(self.id2player)
         role2word = {
             PlayerRoles.CIVILIAN: "civilians",
@@ -202,7 +220,7 @@ class Moderator(
             content=Text(text=msg, display_text=msg)
         )
 
-    def assign_keys(self, player: Profile) -> ModeratorKeyAssignment:
+    async def assign_keys(self, player: Profile) -> ModeratorKeyAssignment:
         role = self.id2role[player.id]
         if role == PlayerRoles.CIVILIAN:
             return ModeratorKeyAssignment.create_with_key(
@@ -217,7 +235,7 @@ class Moderator(
                 sender=self.profile, receiver=player
             )
 
-    def ask_for_key_description(self) -> ModeratorAskForDescription:
+    async def ask_for_key_description(self) -> ModeratorAskForDescription:
         return ModeratorAskForDescription.create(
             sender=self.profile,
             receivers=[
@@ -225,7 +243,7 @@ class Moderator(
             ]
         )
 
-    def valid_player_description(self, description: PlayerDescription) -> ModeratorWarning:
+    async def valid_player_description(self, description: PlayerDescription) -> ModeratorWarning:
         player_id = description.sender_id
         player_role = self.id2role[player_id]
         if player_role != PlayerRoles.BLANK and self.env_var["key_modality"].current_value == KeyModalities.TEXT:
@@ -248,7 +266,7 @@ class Moderator(
             has_warn=False
         )
 
-    def ask_for_role_prediction(self) -> ModeratorAskForRolePrediction:
+    async def ask_for_role_prediction(self) -> ModeratorAskForRolePrediction:
         has_blank = self.env_var["has_blank"].current_value
         return ModeratorAskForRolePrediction.create(
             sender=self.profile,
@@ -261,7 +279,7 @@ class Moderator(
             has_blank_slate=has_blank
         )
 
-    def summarize_players_prediction(self, predictions: List[PlayerPrediction]) -> ModeratorPredictionSummary:
+    async def summarize_players_prediction(self, predictions: List[PlayerPrediction]) -> ModeratorPredictionSummary:
         has_blank = self.env_var["has_blank"].current_value
         summaries = []
         extracted_predictions = {}
@@ -303,7 +321,7 @@ class Moderator(
             ground_truth=ground_truth
         )
 
-    def ask_for_vote(self) -> ModeratorAskForVote:
+    async def ask_for_vote(self) -> ModeratorAskForVote:
         has_blank = self.env_var["has_blank"].current_value
         return ModeratorAskForVote.create(
             sender=self.profile,
@@ -313,7 +331,7 @@ class Moderator(
             has_blank_slate=has_blank
         )
 
-    def summarize_player_votes(
+    async def summarize_player_votes(
         self,
         votes: List[PlayerVote],
         focused_players: Optional[List[Profile]]
@@ -370,7 +388,7 @@ class Moderator(
                 players_voted_to=player2votes
             )
 
-    def check_if_game_over(self) -> ModeratorCheckGameOverSummary:
+    async def check_if_game_over(self) -> ModeratorCheckGameOverSummary:
         def return_game_over(role: PlayerRoles):
             winners = [
                 player.name for player in self.role2players[role]
@@ -421,7 +439,7 @@ class Moderator(
             winners=None
         )
 
-    def reset_inner_status(self):
+    async def reset_inner_status(self):
         self.id2role: Dict[str, PlayerRoles] = {}
         self.role2players: Dict[PlayerRoles, List[Profile]] = {
             PlayerRoles.CIVILIAN: [],
