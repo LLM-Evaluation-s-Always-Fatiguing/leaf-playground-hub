@@ -130,19 +130,26 @@ class ModeratorAskForRolePrediction(TextMessage):
     ) -> "ModeratorAskForRolePrediction":
         if has_blank:
             msg = (
-                f"预测阶段：现在，进行角色预测。分析自己是否是卧底；若不是，找出可能存在的卧底和白板。\n"
-                f"请一步一步地思考。然后诚实地以以下形式告诉我你的想法。\n"
-                f"卧底：<spy_name>, ..., <spy_name>; 白板：<blank_name><EOS>\n"
-                f"<spy_name>是你认为是卧底的玩家名；<blank_name>是你认为是白板的玩家名。\n"
+                f"预测阶段：\n"
+                f"现在，进行角色预测。首先分析自己是否是卧底，然后找出可能存在的卧底和白板。\n"
+                f"玩家的名字是: {player_names}.\n"
+                f"请一步一步地思考。然后诚实地告诉我你的想法，请尽可能简短，并严格参考以下形式：\n"
+                f"###自我分析###"
+                f"2，3，4的描述跟我的关键词有矛盾，6的描述较为符合我的关键词，所以我和6可能是卧底。5的描述过于宽泛，与其他人的描述相差过多，所以5可能是白板。"
+                f"###角色预测###"
+                f"卧底：1，6；白板：5"
             )
         else:
             msg = (
-                f"预测阶段：现在，进行角色预测。分析自己是否是卧底；若不是，找出可能存在的卧底。"
-                f"请一步一步地思考。然后诚实地以以下形式告诉我你的想法。\n"
-                f"卧底：<spy_name>, ..., <spy_name><EOS>\n"
-                f"<spy_name>是你认为是卧底的玩家名。\n"
+                f"预测阶段：\n"
+                f"现在，进行角色预测。首先分析自己是否是卧底，然后找出可能存在的卧底。\n"
+                f"玩家的名字是: {player_names}.\n"
+                f"请一步一步地思考。然后诚实地告诉我你的想法，请尽可能简短，并严格参考以下形式：\n"
+                f"###自我分析###"
+                f"2，3，4的描述跟我的关键词有矛盾，6的描述较为符合我的关键词，所以我和6可能是卧底。"
+                f"###角色预测###"
+                f"卧底：1，6"
             )
-        msg += f"玩家的名字是: {player_names}.\n"
         return cls(
             sender=sender,
             receivers=receivers,
@@ -162,14 +169,14 @@ class ModeratorAskForVote(TextMessage):
     ) -> "ModeratorAskForVote":
         if has_blank:
             msg = (
-                "投票阶段：现在，请进行投票。"
+                "投票阶段：现在，请结合之前的角色预测，进行投票。"
                 "为了达到自己的胜利条件，请做出选择，并以以下形式给我你的投票：\n"
                 "投票：<player_name><EOS>\n"
                 "<player_name>是你想投票的玩家名。\n"
             )
         else:
             msg = (
-                "投票阶段：现在，请进行投票。"
+                "投票阶段：现在，请结合之前的角色预测，进行投票。"
                 "为了达到自己的胜利条件，请做出选择，并以以下形式给我你的投票：\n"
                 "投票：<player_name><EOS>\n"
                 "<player_name>是你想投票的玩家名。\n"
@@ -203,7 +210,7 @@ class PlayerPrediction(TextMessage):
             content = self.content.text
             if symbol in content:
                 content = content[content.index(symbol) + len(symbol):].strip()
-                content = content.split(":")[0].strip()
+                content = content.split("：")[0].strip()
                 for pred in content.split(","):
                     pred = pred.strip()
                     names.add(get_most_similar_text(pred, [each.strip() for each in player_names]))
