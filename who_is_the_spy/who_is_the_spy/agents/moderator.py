@@ -165,11 +165,17 @@ class Moderator(
         elif key_modality == KeyModalities.IMAGE:
             key_assign_summary = (
                 f"""
+                <div style="width:100%;display:flex;flex-direction:row;justify-content:flex-start;align-items:flex-start;">
                 <figure>
-                <img src="{self.civilian_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="256" height="256"/>
-                <img src="{self.spy_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="256" height="256"/>
+                <figcaption>Civilian</figcaption>
+                < img src="{self.civilian_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
                 </figure>
-                """
+                <figure>
+                <figcaption>Spy</figcaption>
+                < img src="{self.spy_key.url}" alt="{PlayerRoles.CIVILIAN.value}" width="50%" />
+                </figure>
+                </div>
+                """.strip()
             )
         else:
             raise NotImplementedError(f"[{key_modality.value}] modal not supported yet.")
