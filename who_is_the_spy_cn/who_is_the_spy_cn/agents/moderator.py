@@ -34,7 +34,8 @@ class Moderator(
         "你不会被告知自己的角色，只能通过观察和分析进行猜测。\n\n"
         "###游戏阶段###\n\n"
         "这场游戏有四个阶段:\n"
-        "1.描述阶段：所有玩家同时进行一句话描述，无先后顺序。描述的对象可以是你收到的关键词，也可以是任何你认为可能是正确的关键词。当你不确定自己的角色时，可以通过模糊的描述从而隐藏自己的角色和关键词。\n"
+        "1.描述阶段：所有玩家同时进行一句话描述，无先后顺序。描述的对象可以是你收到的关键词，也可以是任何你认为可能是正确的关键词。"
+        "当你不确定自己的角色时，可以通过模糊的描述从而隐藏自己的角色和关键词。\n"
         "2.预测阶段：根据本场游戏的历史上下文，判断自己是否是卧底，并预测其他的卧底和白板。\n"
         "3.投票阶段：为了达到你的胜利条件，请投出你的选票。被投票最多的人将被淘汰。\n"
         "4.游戏结束：当卧底全部被淘汰，或者仅剩两位玩家时，游戏结束。\n\n"
@@ -59,7 +60,8 @@ class Moderator(
         "###游戏阶段###\n\n"
         "###游戏阶段###\n\n"
         "这场游戏有四个阶段:\n"
-        "1.描述阶段：所有玩家同时进行一句话描述，无先后顺序。描述的对象可以是你收到的关键词，也可以是任何你认为可能是正确的关键词。当你不确定自己的角色时，可以通过模糊的描述从而隐藏自己的角色和关键词。\n"
+        "1.描述阶段：所有玩家同时进行一句话描述，无先后顺序。描述的对象可以是你收到的关键词，也可以是任何你认为可能是正确的关键词。"
+        "当你不确定自己的角色时，可以通过模糊的描述从而隐藏自己的角色和关键词。\n"
         "2.预测阶段：根据本场游戏的历史上下文，判断自己是否是卧底，并预测其他的卧底。\n"
         "3.投票阶段：为了达到你的胜利条件，请投出你的选票。被投票最多的人将被淘汰。\n"
         "4.游戏结束：当卧底全部被淘汰，或者仅剩{set.num}位玩家时，游戏结束。\n\n"
@@ -150,7 +152,10 @@ class Moderator(
             [f"- {role.value} :: {[f'{player.name}({player.id})' for player in players]}"
              for role, players in self.role2players.items()]
         )
-        key_assign_summary = f"- civilian :: {self.civilian_key}\n- spy :: {self.spy_key}"
+        key_assign_summary = (
+            f"- {PlayerRoles.CIVILIAN.value} :: {self.civilian_key}\n"
+            f"- {PlayerRoles.SPY.value} :: {self.spy_key}"
+        )
         msg = (
             f"## 角色和关键词分配结果\n\n"
             f"### 角色\n{role_assign_summary}\n\n### 关键词\n{key_assign_summary}"
@@ -160,7 +165,10 @@ class Moderator(
             receivers=[self.profile],
             content=Text(text=msg, display_text=msg),
             role2players={role.value: [p.name for p in players] for role, players in self.role2players.items()},
-            keys={"平民": self.civilian_key.display_text, "卧底": self.spy_key.display_text}
+            keys={
+                PlayerRoles.CIVILIAN.value: self.civilian_key.display_text,
+                PlayerRoles.SPY.value: self.spy_key.display_text
+            }
         )
 
     async def introduce_game_rule(self) -> ModeratorSummary:
@@ -175,9 +183,9 @@ class Moderator(
     async def announce_game_start(self) -> ModeratorSummary:
         num_players = len(self.id2player)
         role2word = {
-            PlayerRoles.CIVILIAN: "名平民",
-            PlayerRoles.SPY: "名卧底",
-            PlayerRoles.BLANK: "名白板"
+            PlayerRoles.CIVILIAN: f"名{PlayerRoles.CIVILIAN.value}",
+            PlayerRoles.SPY: f"名{PlayerRoles.SPY.value}",
+            PlayerRoles.BLANK: f"名{PlayerRoles.BLANK.value}"
         }
         roles_num_description = ", ".join(
             [f"{len(role_players)} {role2word[role]}" for role, role_players in self.role2players.items()]
@@ -292,19 +300,19 @@ class Moderator(
             ground_truth=ground_truth
         )
 
-    async def ask_for_vote(self) -> ModeratorAskForVote:
-        has_blank = self.env_var["has_blank"].current_value
+    async def ask_for_vote(self, targets: List[Profile]) -> ModeratorAskForVote:
         return ModeratorAskForVote.create(
             sender=self.profile,
             receivers=[
                 player for player in self.id2player.values() if self.id2status[player.id] == PlayerStatus.ALIVE
             ],
-            has_blank=has_blank
+            targets=targets
         )
 
     async def summarize_player_votes(
         self,
         votes: List[PlayerVote],
+        patience: int,
         focused_players: Optional[List[Profile]]
     ) -> ModeratorVoteSummary:
         def get_most_voted_players() -> List[Profile]:
@@ -331,13 +339,13 @@ class Moderator(
         voting_detail = "\n".join([f"{voter} 投票给 {voted}" for voter, voted in player2votes.items()]) + "\n"
         if focused_players:
             voting_detail += (
-                f"现在是重新投票环节, 只能投票给 {[p.name for p in focused_players]} .\n"
+                f"这是一次针对平票玩家的重新投票, 因此将仅统计上次投票中平票玩家 {[p.name for p in focused_players]} 的本次得票。\n"
             )
         most_voted_players = get_most_voted_players()
-        if len(most_voted_players) > 1:  # tied
+        if len(most_voted_players) > 1 and patience > 0:  # tied
             msg = (
-                f"{voting_detail}{[p.name for p in most_voted_players]} 有相同的票数。 "
-                f"{voting_detail}{[p.name for p in most_voted_players]} 请再进行一次一句话描述。"
+                f"{voting_detail}\n玩家 {[p.name for p in most_voted_players]} 有相同的票数。"
+                f"请这些玩家额外进行一次针对自己获得的关键词的一句话描述。"
             )
             return ModeratorVoteSummary(
                 sender=self.profile,
@@ -350,7 +358,7 @@ class Moderator(
         else:  # eliminate
             for player in most_voted_players:
                 self.id2status[player.id] = PlayerStatus.ELIMINATED
-            msg = f"{voting_detail}{most_voted_players[0].name} 票数最多，本轮被淘汰。"
+            msg = f"{voting_detail}\n玩家 {[p.name for p in most_voted_players]} 获得的票数最多，本轮被淘汰。"
             return ModeratorVoteSummary(
                 sender=self.profile,
                 receivers=[player for player in self.id2player.values()],
