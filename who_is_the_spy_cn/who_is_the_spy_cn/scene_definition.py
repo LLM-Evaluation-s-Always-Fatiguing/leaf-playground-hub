@@ -429,7 +429,7 @@ SCENE_DEFINITION = SceneDefinition(
                         return_annotation=PlayerDescription
                     ),
                     metrics=[MetricDefinition(
-                        name="逻辑性",
+                        name="伪装能力",
                         description=f"玩家对于词汇描述的逻辑性",
                         record_value_dtype=ValueDType.INT,
                         record_display_type=DisplayType.FIVE_STARTS_RATE,

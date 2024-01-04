@@ -48,16 +48,16 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
             if not message.sender_id == self.moderator.id:
                 references = self.message_pool.get_messages(message.sender)
             self.message_pool.put_message(message)
-            self.logger.add_log(
-                self.log_body_class(
-                    references=references,
-                    response=message,
-                    log_msg=log_msg,
-                    action_belonged_chain=action_belonged_chain,
-                    game_id=game_id,
-                    round_id=round_id
-                )
+            log = self.log_body_class(
+                references=references,
+                response=message,
+                log_msg=log_msg,
+                action_belonged_chain=action_belonged_chain,
+                game_id=game_id,
+                round_id=round_id
             )
+            self.logger.add_log(log)
+            self.notify_evaluators_record(log)
 
         async def player_receive_key(player: BaseAIPlayer) -> None:
             history = self.message_pool.get_messages(player.profile)
