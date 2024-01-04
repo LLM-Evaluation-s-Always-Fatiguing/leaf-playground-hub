@@ -75,14 +75,14 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
             history = self.message_pool.get_messages(player_.profile)
             try:
                 description = await player_.describe_key(
-                    history, [self.moderator.profile] + [p.profile for p in players]
+                    history, [self.moderator.profile] + [p.profile for p in self.players]
                 )
             except:
                 if self.config.debug_mode:
                     raise
                 description = PlayerDescription(
                     sender=player_.profile,
-                    receivers=[self.moderator.profile] + [p.profile for p in players],
+                    receivers=[self.moderator.profile] + [p.profile for p in self.players],
                     content=Text(text="我无话可说。")
                 )
             put_message(

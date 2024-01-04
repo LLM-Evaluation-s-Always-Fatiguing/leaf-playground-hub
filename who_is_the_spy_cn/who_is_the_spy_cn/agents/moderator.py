@@ -219,7 +219,7 @@ class Moderator(
         return ModeratorAskForDescription.create(
             sender=self.profile,
             receivers=[
-                player for player in self.id2player.values() if self.id2status[player.id] == PlayerStatus.ALIVE
+                player for player in self.id2player.values()
             ]
         )
 
