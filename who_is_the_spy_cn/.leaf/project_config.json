@@ -300,7 +300,7 @@
                                 },
                                 "metrics": [
                                     {
-                                        "name": "逻辑性",
+                                        "name": "伪装能力",
                                         "description": "玩家对于词汇描述的逻辑性",
                                         "record_value_dtype": "INT",
                                         "record_display_type": "FiveStarsRate",
@@ -469,12 +469,12 @@
                     },
                     "DescribeKeyActionMetricsConfig": {
                         "properties": {
-                            "逻辑性": {
+                            "伪装能力": {
                                 "$ref": "#/$defs/MetricConfig"
                             }
                         },
                         "required": [
-                            "逻辑性"
+                            "伪装能力"
                         ],
                         "title": "DescribeKeyActionMetricsConfig",
                         "type": "object"
@@ -1132,7 +1132,148 @@
                 }
             ]
         },
-        "evaluators_metadata": null,
+        "evaluators_metadata": [
+            {
+                "cls_name": "AdvanceEvaluator",
+                "description": "谁是卧底专用评估器，分析发言的伪装能力",
+                "config_schema": {
+                    "$defs": {
+                        "EvalOpenAIBackendConfig": {
+                            "properties": {
+                                "model": {
+                                    "default": "gpt-4-1106-preview",
+                                    "enum": [
+                                        "gpt-4-1106-preview",
+                                        "gpt-4"
+                                    ],
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Key"
+                                },
+                                "organization": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Organization"
+                                },
+                                "base_url": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Base Url"
+                                },
+                                "azure_endpoint": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Azure Endpoint"
+                                },
+                                "azure_deployment": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Azure Deployment"
+                                },
+                                "api_version": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Version"
+                                },
+                                "is_azure": {
+                                    "default": false,
+                                    "title": "Is Azure",
+                                    "type": "boolean"
+                                },
+                                "max_retries": {
+                                    "default": 2,
+                                    "title": "Max Retries",
+                                    "type": "integer"
+                                },
+                                "timeout": {
+                                    "default": 60,
+                                    "title": "Timeout",
+                                    "type": "number"
+                                }
+                            },
+                            "title": "EvalOpenAIBackendConfig",
+                            "type": "object"
+                        },
+                        "GeneralOpenEvalToolConfig": {
+                            "properties": {
+                                "openai_backend_config": {
+                                    "$ref": "#/$defs/EvalOpenAIBackendConfig"
+                                }
+                            },
+                            "required": [
+                                "openai_backend_config"
+                            ],
+                            "title": "GeneralOpenEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "openEvalConfig": {
+                            "$ref": "#/$defs/GeneralOpenEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "openEvalConfig"
+                    ],
+                    "title": "AdvanceEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "AdvanceEvaluator",
+                    "module": "who_is_the_spy_cn.metric_evaluators.advance_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "player.describe_key.伪装能力"
+                ]
+            }
+        ],
         "charts_metadata": null
     },
     "leaf_version": "0.3.0.dev0"
