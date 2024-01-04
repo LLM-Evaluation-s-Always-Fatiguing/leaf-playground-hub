@@ -298,7 +298,24 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerDescription'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null
+                                "metrics": [
+                                    {
+                                        "name": "逻辑性",
+                                        "description": "玩家对于词汇描述的逻辑性",
+                                        "record_value_dtype": "INT",
+                                        "record_display_type": "FiveStarsRate",
+                                        "expect_resp_msg_type": "PlayerDescription",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "who_is_the_spy_cn.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    }
+                                ]
                             },
                             {
                                 "name": "predict_role",
@@ -441,12 +458,25 @@
                     "DescribeKeyActionConfig": {
                         "properties": {
                             "metrics_config": {
-                                "const": null,
-                                "default": null,
-                                "title": "Metrics Config"
+                                "$ref": "#/$defs/DescribeKeyActionMetricsConfig"
                             }
                         },
+                        "required": [
+                            "metrics_config"
+                        ],
                         "title": "DescribeKeyActionConfig",
+                        "type": "object"
+                    },
+                    "DescribeKeyActionMetricsConfig": {
+                        "properties": {
+                            "逻辑性": {
+                                "$ref": "#/$defs/MetricConfig"
+                            }
+                        },
+                        "required": [
+                            "逻辑性"
+                        ],
+                        "title": "DescribeKeyActionMetricsConfig",
                         "type": "object"
                     },
                     "DynamicObject": {
@@ -540,6 +570,17 @@
                             }
                         },
                         "title": "KeyModalityEnvVarConfig",
+                        "type": "object"
+                    },
+                    "MetricConfig": {
+                        "properties": {
+                            "enable": {
+                                "default": true,
+                                "title": "Enable",
+                                "type": "boolean"
+                            }
+                        },
+                        "title": "MetricConfig",
                         "type": "object"
                     },
                     "ModeratorRoleActionsConfig": {
@@ -877,7 +918,8 @@
                         "obj": "Moderator",
                         "module": "who_is_the_spy_cn.agents.moderator",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
                 }
             ],
             "player": [
@@ -1085,12 +1127,13 @@
                         "obj": "OpenAIBasicPlayer",
                         "module": "who_is_the_spy_cn.agents.openai_basic_player",
                         "source_file": null
-                    }
+                    },
+                    "is_human": false
                 }
             ]
         },
         "evaluators_metadata": null,
         "charts_metadata": null
     },
-    "leaf_version": "0.2.0.dev0"
+    "leaf_version": "0.3.0.dev0"
 }

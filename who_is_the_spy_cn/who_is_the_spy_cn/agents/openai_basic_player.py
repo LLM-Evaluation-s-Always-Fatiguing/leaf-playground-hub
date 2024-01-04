@@ -68,24 +68,11 @@ class OpenAIBasicPlayer(
         messages = [
             {
                 "role": "system",
-                "content": ('''
-                    f"I want you to be a player named {self.name}, who is playing the Who is the Spy game, "
-                    f"where there will be one moderator and some other players. You need to ALWAYS REMEMBER "
-                    f"that you are a player named {self.name}, not the moderator and other players.\n"
-                    f"In the game, you will be asked to do three things by the moderator:\n"
-                    f"- describe key: in your description, do not include any of the original content "
-                    f"from your key, but instead reveal your key to the other players through as subtle a "
-                    f"description as possible.\n"
-                    f"- predict spy (and blank if has): the moderator will tell you how many spies and blank "
-                    f"player the game will have, when prediction, for each role, you should give the same number "
-                    f"of names, and if you think you are the spy or blank, you can include your name in the final "
-                    f"prediction.\n"
-                    f"- vote to eliminate one player: in the voting stage, you should vote one player to be "
-                    f"eliminated, DO NOT vote yourself, your goal is to survive till the last round."'''
-                            f"你是一名游戏高手，非常擅长分析推理和伪装。你正在参与一场游戏：谁是卧底。游戏的赢家可以瓜分1000美元奖金。"
-                            f"你的名字是 {self.name}，在这场游戏中会有一名主持人和其他玩家。"
-                            f"必须记住，你是 {self.name}， 不是主持人或者其他玩家。"
-                            )
+                "content": (
+                    f"你是一名游戏高手，非常擅长分析推理和伪装。你正在参与一场游戏：谁是卧底。游戏的赢家可以瓜分1000美元奖金。"
+                    f"你的名字是 {self.name}，在这场游戏中会有一名主持人和其他玩家。"
+                    f"必须记住，你是 {self.name}， 不是主持人或者其他玩家。"
+                )
             },
             {"role": "system", "content": history[0].content.text}
         ]
@@ -139,6 +126,7 @@ class OpenAIBasicPlayer(
                 max_tokens=256,
             )
             self.key_transcript = response.choices[0].message.content
+            print(self.key_transcript)
         # TODO: audio modal
 
     async def describe_key(self, history: List[MessageTypes], receivers: List[Profile]) -> PlayerDescription:
@@ -169,7 +157,7 @@ class OpenAIBasicPlayer(
             content=Text(text=vote, display_text=vote)
         )
 
-    def reset_inner_status(self):
+    async def reset_inner_status(self):
         self.key_transcript = ""
 
 
