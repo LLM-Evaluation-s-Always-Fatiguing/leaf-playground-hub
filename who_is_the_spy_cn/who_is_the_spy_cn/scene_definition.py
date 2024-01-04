@@ -1,5 +1,7 @@
 from enum import Enum
 from typing import Dict, List, Literal, Optional, Set, Union
+
+from leaf_playground.core.scene_definition.definitions.metric import _RecordData
 from typing_extensions import Annotated
 
 from pydantic import Field
@@ -11,7 +13,6 @@ from leaf_playground.data.media import Audio, Image, Text
 from leaf_playground.data.profile import Profile
 
 from .text_utils import get_most_similar_text
-
 
 KEY_PLACEHOLDER = "<关键词>"
 
@@ -122,11 +123,11 @@ class ModeratorAskForRolePrediction(TextMessage):
 
     @classmethod
     def create(
-        cls,
-        sender: Profile,
-        receivers: List[Profile],
-        player_names: List[str],
-        has_blank: bool
+            cls,
+            sender: Profile,
+            receivers: List[Profile],
+            player_names: List[str],
+            has_blank: bool
     ) -> "ModeratorAskForRolePrediction":
         if has_blank:
             msg = (
@@ -162,10 +163,10 @@ class ModeratorAskForVote(TextMessage):
 
     @classmethod
     def create(
-        cls,
-        sender: Profile,
-        receivers: List[Profile],
-        has_blank: bool
+            cls,
+            sender: Profile,
+            receivers: List[Profile],
+            has_blank: bool
     ) -> "ModeratorAskForVote":
         if has_blank:
             msg = (
@@ -245,6 +246,11 @@ MessageTypes = Annotated[
     ],
     Field(discriminator="msg_type")
 ]
+
+
+def avg_fn(records: List[_RecordData]) -> AggregationMethodOutput:
+    avg = round(sum(record.value for record in records) / len(records), 4)
+    return AggregationMethodOutput(value=avg)
 
 
 SCENE_DEFINITION = SceneDefinition(
@@ -425,7 +431,16 @@ SCENE_DEFINITION = SceneDefinition(
                             )
                         ],
                         return_annotation=PlayerDescription
-                    )
+                    ),
+                    metrics=[MetricDefinition(
+                        name="逻辑性",
+                        description=f"玩家对于词汇描述的逻辑性",
+                        record_value_dtype=ValueDType.INT,
+                        record_display_type=DisplayType.FIVE_STARTS_RATE,
+                        expect_resp_msg_type=PlayerDescription,
+                        agg_method=DynamicAggregationFn.create_dynamic_fn(fn=avg_fn),
+                        is_comparison=False
+                    )]
                 ),
                 ActionDefinition(
                     name="predict_role",
@@ -487,7 +502,6 @@ SCENE_DEFINITION = SceneDefinition(
         )
     ]
 )
-
 
 __all__ = [
     "KEY_PLACEHOLDER",
