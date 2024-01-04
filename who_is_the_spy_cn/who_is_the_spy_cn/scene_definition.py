@@ -31,7 +31,7 @@ class PlayerStatus(Enum):
 class KeyModalities(Enum):
     TEXT = "文本"
     IMAGE = "图片"
-    # AUDIO = "audio"
+    # AUDIO = "音频"
 
 
 KeyTypes = Annotated[Union[Text, Image, Audio], Field(discriminator="type")]
@@ -162,24 +162,14 @@ class ModeratorAskForVote(TextMessage):
             cls,
             sender: Profile,
             receivers: List[Profile],
-            has_blank: bool
+            targets: List[Profile]
     ) -> "ModeratorAskForVote":
-        if has_blank:
-            msg = (
-                "投票阶段：现在，请结合之前的角色预测，进行投票。"
-                "为了达到自己的胜利条件，请做出选择，并以以下形式给我你的投票：\n"
-                "投票：<player_name><EOS>\n"
-                "<player_name>是你想投票的玩家名。\n"
-            )
-        else:
-            msg = (
-                "投票阶段：现在，请结合之前的角色预测，进行投票。"
-                "为了达到自己的胜利条件，请做出选择，并以以下形式给我你的投票：\n"
-                "投票：<player_name><EOS>\n"
-                "<player_name>是你想投票的玩家名。\n"
-            )
-        msg += (
-            f"玩家的名字是: {','.join([player.name for player in receivers])}.\n"
+        msg = (
+            "投票阶段：现在，请结合之前的角色预测，进行投票。"
+            "为了达到自己的胜利条件，请做出选择，并以以下形式给我你的投票：\n"
+            "投票：<player_name><EOS>\n"
+            "<player_name>是你想投票的玩家名。\n"
+            f"可以被投票的玩家是: {','.join([target.name for target in targets])}.\n"
             "你的回答应该以 '投票：' 作为开头"
         )
         return cls(
@@ -251,7 +241,10 @@ def avg_fn(records: List[_RecordData]) -> AggregationMethodOutput:
 
 SCENE_DEFINITION = SceneDefinition(
     name="谁是卧底",
-    description="谁是卧底是一款游戏。游戏中有三种角色：平民，卧底和白板。每位玩家在游戏开始时都会被告知一个关键词，其中平民与卧底的关键词不同但相似，白板是一个空白关键词。玩家需要对自己的关键词进行描述，每轮描述结束后进行投票，获票最多的玩家将被淘汰。平民需要抓出每一位卧底和白板，卧底需要假装平民活到最后，白板的胜利条件是淘汰所有的卧底后依旧留在场上。",
+    description="谁是卧底是一款游戏。游戏中有三种角色：平民，卧底和白板。每位玩家在游戏开始时都会被告知一个关键词，"
+                "其中平民与卧底的关键词不同但相似，白板是一个空白关键词。玩家需要对自己的关键词进行描述，每轮描述结束"
+                "后进行投票，获票最多的玩家将被淘汰。平民需要抓出每一位卧底和白板，卧底需要假装平民活到最后，白板的胜利"
+                "条件是淘汰所有的卧底后依旧留在场上。",
     roles=[
         RoleDefinition(
             name="moderator",
@@ -357,7 +350,12 @@ SCENE_DEFINITION = SceneDefinition(
                     name="ask_for_vote",
                     description="进行投票",
                     signature=ActionSignatureDefinition(
-                        parameters=None,
+                        parameters=[
+                            ActionSignatureParameterDefinition(
+                                name="targets",
+                                annotation=List[Profile]
+                            )
+                        ],
                         return_annotation=ModeratorAskForVote
                     )
                 ),
@@ -369,6 +367,10 @@ SCENE_DEFINITION = SceneDefinition(
                             ActionSignatureParameterDefinition(
                                 name="votes",
                                 annotation=List[PlayerVote]
+                            ),
+                            ActionSignatureParameterDefinition(
+                                name="patience",
+                                annotation=int
                             ),
                             ActionSignatureParameterDefinition(
                                 name="focused_players",
