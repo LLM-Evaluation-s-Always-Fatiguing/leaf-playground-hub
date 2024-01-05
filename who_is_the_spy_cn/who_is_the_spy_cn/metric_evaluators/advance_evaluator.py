@@ -138,7 +138,7 @@ class AdvanceEvaluator(
                 config.openEvalConfig
             )
             open_eval_tool.set_activated_metrics(record_metrics)
-            open_eval_tool.set_max_tokens(256)
+            open_eval_tool.set_max_tokens(512)
             open_eval_tool.set_temperature(0.1)
 
             return open_eval_tool

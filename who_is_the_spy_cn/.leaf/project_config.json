@@ -1037,6 +1037,202 @@
                     "is_human": true
                 },
                 {
+                    "cls_name": "OpenAIAdvancePlayer",
+                    "description": "An AI agent using OpenAI as backend, participants in the game Who is the Spy as a player",
+                    "config_schema": {
+                        "$defs": {
+                            "BackendConfig": {
+                                "properties": {
+                                    "model": {
+                                        "enum": [
+                                            "gpt-4-1106-preview",
+                                            "gpt-4-vision-preview"
+                                        ],
+                                        "title": "Model",
+                                        "type": "string"
+                                    },
+                                    "api_key": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Key"
+                                    },
+                                    "organization": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Organization"
+                                    },
+                                    "base_url": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Base Url"
+                                    },
+                                    "azure_endpoint": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Endpoint"
+                                    },
+                                    "azure_deployment": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Azure Deployment"
+                                    },
+                                    "api_version": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Api Version"
+                                    },
+                                    "is_azure": {
+                                        "default": false,
+                                        "title": "Is Azure",
+                                        "type": "boolean"
+                                    },
+                                    "max_retries": {
+                                        "default": 2,
+                                        "title": "Max Retries",
+                                        "type": "integer"
+                                    },
+                                    "timeout": {
+                                        "default": 60,
+                                        "title": "Timeout",
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "model"
+                                ],
+                                "title": "BackendConfig",
+                                "type": "object"
+                            },
+                            "Profile": {
+                                "properties": {
+                                    "id": {
+                                        "title": "Id",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/$defs/Role"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "title": "Profile",
+                                "type": "object"
+                            },
+                            "Role": {
+                                "properties": {
+                                    "name": {
+                                        "title": "Name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "title": "Description",
+                                        "type": "string"
+                                    },
+                                    "is_static": {
+                                        "default": false,
+                                        "title": "Is Static",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "title": "Role",
+                                "type": "object"
+                            }
+                        },
+                        "properties": {
+                            "profile": {
+                                "$ref": "#/$defs/Profile"
+                            },
+                            "chart_major_color": {
+                                "anyOf": [
+                                    {
+                                        "pattern": "^#[0-9a-fA-F]{6}$",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "default": null,
+                                "title": "Chart Major Color"
+                            },
+                            "ai_backend_config": {
+                                "$ref": "#/$defs/BackendConfig"
+                            }
+                        },
+                        "required": [
+                            "profile",
+                            "ai_backend_config"
+                        ],
+                        "title": "OpenAIAdvancePlayerConfig",
+                        "type": "object"
+                    },
+                    "obj_for_import": {
+                        "obj": "OpenAIAdvancePlayer",
+                        "module": "who_is_the_spy_cn.agents.openai_advance_player",
+                        "source_file": null
+                    },
+                    "is_human": false
+                },
+                {
                     "cls_name": "OpenAIBasicPlayer",
                     "description": "An AI agent using OpenAI as backend, participants in the game Who is the Spy as a player",
                     "config_schema": {

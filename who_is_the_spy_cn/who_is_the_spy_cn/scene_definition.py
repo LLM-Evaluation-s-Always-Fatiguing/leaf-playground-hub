@@ -113,7 +113,7 @@ class ModeratorAskForDescription(TextMessage):
             sender=sender,
             receivers=receivers,
             content=Text(
-                text=f"描述阶段：现在，请进行一句话描述，描述的对象可以是你收到的关键词也可以是你认为正确的关键词."
+                text=f"描述阶段：现在，请所有玩家依次进行一句话描述，描述的对象可以是你收到的关键词也可以是你认为正确的关键词."
             )
         )
 
