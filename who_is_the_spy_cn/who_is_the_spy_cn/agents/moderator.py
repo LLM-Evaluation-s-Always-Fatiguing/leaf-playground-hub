@@ -268,7 +268,7 @@ class Moderator(
             )
             extracted_predictions[prediction.sender_name] = {role.value: list(names) for role, names in preds.items()}
             summary = (
-                f"### {prediction.sender_name}({prediction.sender_id})'s prediction\n"
+                f"**{prediction.sender_name}({prediction.sender_id})'s prediction**\n"
                 f"- {PlayerRoles.SPY.value} :: {list(preds[PlayerRoles.SPY])}"
             )
             if has_blank:
@@ -280,7 +280,7 @@ class Moderator(
             if self.id2status[player.id] == PlayerStatus.ALIVE
         ]
         label = (
-            f"### Correct Answer\n- {PlayerRoles.SPY.value} :: {alive_spies}"
+            f"**Correct Answer**\n- {PlayerRoles.SPY.value} :: {alive_spies}"
         )
         ground_truth = {PlayerRoles.SPY.value: alive_spies}
         if has_blank:

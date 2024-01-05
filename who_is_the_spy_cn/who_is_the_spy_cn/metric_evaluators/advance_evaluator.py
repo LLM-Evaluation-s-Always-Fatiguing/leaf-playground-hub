@@ -1,5 +1,7 @@
+from logging import Logger
 from typing import Any, Dict, List, Optional, Type
 
+from leaf_playground.core.scene_definition import SceneConfig
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
 from leaf_playground.data.log_body import ActionLogBody
@@ -184,7 +186,9 @@ class AdvanceEvaluator(
                 }
 
                 for metric in SUPPORT_METRICS:
-                    if metric.belonged_chain not in evaluator.activated_metrics:
+                    if metric.belonged_chain not in evaluator.activated_metrics or not metric.belonged_chain.startswith(
+                        log.action_belonged_chain
+                    ):
                         continue
 
                     value = await evaluator.evaluate(
