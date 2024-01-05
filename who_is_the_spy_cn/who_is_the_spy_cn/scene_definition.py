@@ -200,7 +200,7 @@ class PlayerPrediction(TextMessage):
                 content = content.split("：")[0].strip()
                 for pred in content.split(","):
                     pred = pred.strip()
-                    names.add(get_most_similar_text(pred, [each.strip() for each in player_names]))
+                    names.add(get_most_similar_text(pred, [each.strip() for each in player_names])) if "[]" not in pred else names.add("")
             return names
 
         preds = {PlayerRoles.SPY: retrieve_names("卧底：")}

@@ -67,7 +67,7 @@ class Moderator(
         "###胜利条件###\n\n"
         "你的胜利条件取决于你的角色：\n"
         "- 作为平民，你需要找出卧底并通过投票将他们淘汰。\n"
-        "- 作为卧底，你需要隐藏自己的角色并潜伏下去，通过投票淘汰其他角色，活到最后你就胜利了。\n"
+        "- 作为卧底，你需要隐藏自己的角色并潜伏下去，通过投票淘汰其他角色，活到最后你就胜利了。\n\n"
         "###限定规则###\n\n"
         "- 你的描述应该足够简短，并且不能直接包含你收到的关键词。\n"
         "- 你的描述不能与之前的描述重复。\n"
@@ -159,15 +159,18 @@ class Moderator(
             f"## 角色和关键词分配结果\n\n"
             f"### 角色\n{role_assign_summary}\n\n### 关键词\n{key_assign_summary}"
         )
+        keys={
+            PlayerRoles.CIVILIAN.value: self.civilian_key.display_text,
+            PlayerRoles.SPY.value: self.spy_key.display_text
+        }
+        if has_blank: 
+            keys[PlayerRoles.BLANK.value] = '空白'
         return ModeratorInitGameSummary(
             sender=self.profile,
             receivers=[self.profile],
             content=Text(text=msg, display_text=msg),
             role2players={role.value: [p.name for p in players] for role, players in self.role2players.items()},
-            keys={
-                PlayerRoles.CIVILIAN.value: self.civilian_key.display_text,
-                PlayerRoles.SPY.value: self.spy_key.display_text
-            }
+            keys=keys
         )
 
     async def introduce_game_rule(self) -> ModeratorSummary:
