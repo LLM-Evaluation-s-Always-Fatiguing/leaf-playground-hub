@@ -123,11 +123,11 @@ class ModeratorAskForRolePrediction(TextMessage):
 
     @classmethod
     def create(
-            cls,
-            sender: Profile,
-            receivers: List[Profile],
-            player_names: List[str],
-            has_blank: bool
+        cls,
+        sender: Profile,
+        receivers: List[Profile],
+        player_names: List[str],
+        has_blank: bool
     ) -> "ModeratorAskForRolePrediction":
         if has_blank:
             msg = (
@@ -159,10 +159,10 @@ class ModeratorAskForVote(TextMessage):
 
     @classmethod
     def create(
-            cls,
-            sender: Profile,
-            receivers: List[Profile],
-            targets: List[Profile]
+        cls,
+        sender: Profile,
+        receivers: List[Profile],
+        targets: List[Profile]
     ) -> "ModeratorAskForVote":
         msg = (
             "投票阶段：现在，请结合之前的角色预测，进行投票。"
@@ -455,7 +455,16 @@ SCENE_DEFINITION = SceneDefinition(
                             )
                         ],
                         return_annotation=PlayerPrediction
-                    )
+                    ),
+                    metrics=[MetricDefinition(
+                        name="推理能力",
+                        description=f"玩家根据发言，推理分析其他玩家身份与关键词的能力",
+                        record_value_dtype=ValueDType.INT,
+                        record_display_type=DisplayType.FIVE_STARTS_RATE,
+                        expect_resp_msg_type=PlayerPrediction,
+                        agg_method=DynamicAggregationFn.create_dynamic_fn(fn=avg_fn),
+                        is_comparison=False
+                    )]
                 ),
                 ActionDefinition(
                     name="vote",

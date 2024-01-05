@@ -346,7 +346,24 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerPrediction'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null
+                                "metrics": [
+                                    {
+                                        "name": "推理能力",
+                                        "description": "玩家根据发言，推理分析其他玩家身份与关键词的能力",
+                                        "record_value_dtype": "INT",
+                                        "record_display_type": "FiveStarsRate",
+                                        "expect_resp_msg_type": "PlayerPrediction",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "who_is_the_spy_cn.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    }
+                                ]
                             },
                             {
                                 "name": "vote",
@@ -756,12 +773,25 @@
                     "PredictRoleActionConfig": {
                         "properties": {
                             "metrics_config": {
-                                "const": null,
-                                "default": null,
-                                "title": "Metrics Config"
+                                "$ref": "#/$defs/PredictRoleActionMetricsConfig"
                             }
                         },
+                        "required": [
+                            "metrics_config"
+                        ],
                         "title": "PredictRoleActionConfig",
+                        "type": "object"
+                    },
+                    "PredictRoleActionMetricsConfig": {
+                        "properties": {
+                            "推理能力": {
+                                "$ref": "#/$defs/MetricConfig"
+                            }
+                        },
+                        "required": [
+                            "推理能力"
+                        ],
+                        "title": "PredictRoleActionMetricsConfig",
                         "type": "object"
                     },
                     "ReceiveKeyActionConfig": {
@@ -1231,7 +1261,7 @@
         "evaluators_metadata": [
             {
                 "cls_name": "AdvanceEvaluator",
-                "description": "谁是卧底专用评估器，分析发言的伪装能力",
+                "description": "谁是卧底专用评估器，分析发言的伪装能力和推理的逻辑能力",
                 "config_schema": {
                     "$defs": {
                         "EvalOpenAIBackendConfig": {
@@ -1366,11 +1396,26 @@
                     "source_file": null
                 },
                 "metrics": [
-                    "player.describe_key.伪装能力"
+                    "player.describe_key.伪装能力",
+                    "player.predict_role.推理能力"
                 ]
             }
         ],
-        "charts_metadata": null
+        "charts_metadata": [
+            {
+                "cls_name": "AdvanceChart",
+                "obj_for_import": {
+                    "obj": "AdvanceChart",
+                    "module": "who_is_the_spy_cn.charts.advance",
+                    "source_file": null
+                },
+                "chart_name": "advance",
+                "supported_metric_names": [
+                    "player.describe_key.伪装能力",
+                    "player.predict_role.推理能力"
+                ]
+            }
+        ]
     },
     "leaf_version": "0.3.0.dev0"
 }
