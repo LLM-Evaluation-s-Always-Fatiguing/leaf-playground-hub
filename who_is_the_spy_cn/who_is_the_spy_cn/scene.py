@@ -112,7 +112,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                 prediction = PlayerPrediction(
                     sender=player_.profile,
                     receivers=[self.moderator.profile],
-                    content=Text(text="")
+                    content=Text(text="我无话可说。")
                 )
             put_message(
                 prediction,

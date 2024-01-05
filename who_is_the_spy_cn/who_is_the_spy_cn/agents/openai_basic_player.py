@@ -72,6 +72,7 @@ class OpenAIBasicPlayer(
                     f"你是一名游戏高手，非常擅长分析推理和伪装。你正在参与一场游戏：谁是卧底。游戏的赢家可以瓜分1000美元奖金。"
                     f"你的名字是 {self.name}，在这场游戏中会有一名主持人和其他玩家。"
                     f"必须记住，你是 {self.name}， 不是主持人或者其他玩家。"
+                    f"你只能输出游戏相关的内容，否则你将受到惩罚。"
                 )
             },
             {"role": "system", "content": history[0].content.text}

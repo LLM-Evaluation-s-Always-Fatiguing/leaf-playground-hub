@@ -132,7 +132,7 @@ class ModeratorAskForRolePrediction(TextMessage):
         if has_blank:
             msg = (
                 f"预测阶段：\n"
-                f"现在，进行角色预测。首先分析自己是否是卧底，然后找出可能存在的卧底和白板。\n"
+                f"现在，进行角色预测，仅自己可见。首先分析自己是否是卧底，然后找出可能存在的卧底和白板。\n"
                 f"请保持回答的简短，并用以下形式作为你回答的结尾：\n"
                 f"卧底：[<spy_name>, ..., <spy_name>]；白板：[<blank_name>]<EOS>\n"
                 f"其中<spy_name>是你认为卧底的玩家名，<blank_name>是你认为白板的玩家名。\n"
@@ -141,7 +141,7 @@ class ModeratorAskForRolePrediction(TextMessage):
         else:
             msg = (
                 f"预测阶段：\n"
-                f"现在，进行角色预测。首先分析自己是否是卧底，然后找出可能存在的卧底。\n"
+                f"现在，进行角色预测，仅自己可见。首先分析自己是否是卧底，然后找出可能存在的卧底。\n"
                 f"请保持回答的简短，并用以下形式作为你回答的结尾：\n"
                 f"卧底：[<spy_name>, ..., <spy_name>]<EOS>\n"
                 f"其中<spy_name>是你认为卧底的玩家名。\n"
