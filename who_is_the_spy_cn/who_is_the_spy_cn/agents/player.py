@@ -18,7 +18,8 @@ class BaseAIPlayer(
     SceneAIAgent,
     ABC,
     role_definition=ROLE_DEFINITION,
-    cls_description="An AI agent who participants in the game Who is the Spy as a player"
+    cls_description="An AI agent who participants in the game Who is the Spy as a player",
+    action_exec_timeout=120
 ):
     config_cls = BaseAIPlayerConfig
     config: config_cls
