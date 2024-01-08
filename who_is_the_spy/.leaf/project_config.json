@@ -955,7 +955,8 @@
                         "module": "who_is_the_spy.agents.human_player",
                         "source_file": null
                     },
-                    "is_human": true
+                    "is_human": true,
+                    "action_timeout_seconds": 30
                 },
                 {
                     "cls_name": "OpenAIBasicPlayer",
@@ -1162,7 +1163,8 @@
                         "module": "who_is_the_spy.agents.openai_basic_player",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 30
                 }
             ],
             "moderator": [
@@ -1175,7 +1177,8 @@
                         "module": "who_is_the_spy.agents.moderator",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 30
                 }
             ]
         },

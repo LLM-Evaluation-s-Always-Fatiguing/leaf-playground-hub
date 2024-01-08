@@ -541,7 +541,8 @@
                         "module": "rag_qa.agents.examiner",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 30
                 }
             ],
             "examinee": [
@@ -760,7 +761,8 @@
                         "module": "rag_qa.agents.openai_basic_examinee",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 30
                 }
             ]
         },
