@@ -166,3 +166,7 @@ result/
 results/
 output/
 outputs/
+
+
+# LEAF Workspace
+.leaf_workspace/
