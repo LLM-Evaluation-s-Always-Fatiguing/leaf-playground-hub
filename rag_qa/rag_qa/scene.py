@@ -16,8 +16,6 @@ from .scene_definition import ExamineeAnswer, ExaminerQuestion, MessageType, SCE
 
 
 class RagSceneLogBody(ActionLogBody):
-    references: Optional[List[MessageType]] = Field(default=None)
-    response: MessageType = Field(default=...)
     ground_truth: Optional[Json] = Field(default=None)
 
 
@@ -31,8 +29,8 @@ class RagScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=RagScene
     config_cls = RagSceneConfig
     config: config_cls
 
-    def __init__(self, config: config_cls, logger: Logger):
-        super().__init__(config=config, logger=logger)
+    def __init__(self, config: config_cls):
+        super().__init__(config=config)
 
         self.examiner: Examiner = self.static_agents["examiner"][0]
         self.examinees: List[AIBaseExaminee] = self.agents["examinee"]
@@ -53,8 +51,8 @@ class RagScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=RagScene
             self.message_pool.put_message(answer)
             ground_truth = self.examiner.get_golden_answer(q.question_id)
             log = self.log_body_class(
-                references=[q],
-                response=answer,
+                references=[q.id],
+                response=answer.id,
                 ground_truth=Json(data=ground_truth) if ground_truth else None,
                 log_msg=f"examinee [{examinee.name}] answered question [{q.question_id}]",
                 action_belonged_chain=examinee.role_definition.get_action_definition("answer_question").belonged_chain
@@ -71,7 +69,7 @@ class RagScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=RagScene
             self.logger.add_log(
                 self.log_body_class(
                     references=None,
-                    response=question,
+                    response=question.id,
                     ground_truth=None,
                     log_msg=f"examiner sent question [{question.question_id}] to all examinees",
                     action_belonged_chain=None
