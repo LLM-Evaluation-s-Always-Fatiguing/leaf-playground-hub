@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 from fastapi import status, FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from leaf_playground._type import Singleton
-from leaf_playground.core.workers import Logger, SocketHandler
+from leaf_playground.core.workers import Logger, LogHandler
 from leaf_playground.core.scene_agent import HumanConnection
 from leaf_playground.core.scene_engine import SceneEngine, SceneEngineState
 from leaf_playground.data.log_body import LogBody, ActionLogBody
@@ -32,7 +32,7 @@ parser.add_argument("--docker", action="store_true")
 args = parser.parse_args()
 
 
-class DBSocketHandler(Singleton, SocketHandler):
+class DBLogHandler(Singleton, LogHandler):
     def __init__(self):
         super().__init__()
 
@@ -40,51 +40,55 @@ class DBSocketHandler(Singleton, SocketHandler):
         self._submitted_messages = set()
         self._http_session = aiohttp.ClientSession(base_url=args.server_url)
 
-    async def notify_create(self, log_body: LogBody):
-        if isinstance(log_body, ActionLogBody):
-            message = self._message_pool.get_message_by_id(log_body.response)
-            if message.id not in self._submitted_messages:
-                self._submitted_messages.add(message.id)
+        self._queue = asyncio.Queue()
+
+        asyncio.ensure_future(self.db_write_loop())
+
+    async def db_write_loop(self):
+        while True:
+            log_body: LogBody = await self._queue.get()
+            is_update = log_body.created_at != log_body.last_update
+            if not is_update:
+                if isinstance(log_body, ActionLogBody):
+                    message = self._message_pool.get_message_by_id(log_body.response)
+                    if message.id not in self._submitted_messages:
+                        self._submitted_messages.add(message.id)
+                        async with self._http_session.post(
+                            f"/task/{args.id}/messages/insert?secret_key={args.secret_key}",
+                            headers={'Content-Type': 'application/json'},
+                            json=Message.init_from_message(message, args.id).model_dump(mode="json", by_alias=True)
+                        ) as resp:
+                            if resp.status != 200:
+                                print(f"task [{args.id}] insert message [{message.id}] to database failed.")
+                                print(await resp.text())
                 async with self._http_session.post(
-                    f"/task/{args.id}/messages/insert?secret_key={args.secret_key}",
+                    f"/task/{args.id}/logs/insert?secret_key={args.secret_key}",
                     headers={'Content-Type': 'application/json'},
-                    json=Message.init_from_message(message, args.id).model_dump(mode="json", by_alias=True)
+                    json=Log.init_from_log_body(log_body, args.id).model_dump(mode="json", by_alias=True)
                 ) as resp:
                     if resp.status != 200:
-                        print(f"task [{args.id}] insert message [{message.id}] to database failed.")
+                        print(f"task [{args.id}] insert log [{log_body.id}] to database failed.")
                         print(await resp.text())
-        async with self._http_session.post(
-            f"/task/{args.id}/logs/insert?secret_key={args.secret_key}",
-            headers={'Content-Type': 'application/json'},
-            json=Log.init_from_log_body(log_body, args.id).model_dump(mode="json", by_alias=True)
-        ) as resp:
-            if resp.status != 200:
-                print(f"task [{args.id}] insert log [{log_body.id}] to database failed.")
-                print(await resp.text())
+            else:
+                async with self._http_session.patch(
+                    f"/task/{args.id}/logs/insert?update={args.secret_key}",
+                    headers={'Content-Type': 'application/json'},
+                    json=Log.init_from_log_body(log_body, args.id).model_dump(mode="json", by_alias=True)
+                ) as resp:
+                    if resp.status != 200:
+                        print(f"task [{args.id}] update log [{log_body.id}] to database failed.")
+                        print(await resp.text())
+
+    async def notify_create(self, log_body: LogBody):
+        self._queue.put_nowait(log_body)
 
     async def notify_update(self, log_body: LogBody):
         log_body.last_update = datetime.utcnow()
-        async with self._http_session.patch(
-            f"/task/{args.id}/logs/insert?secret_key={args.secret_key}",
-            headers={'Content-Type': 'application/json'},
-            json=Log.init_from_log_body(log_body, args.id).model_dump(mode="json", by_alias=True)
-        ) as resp:
-            if resp.status != 200:
-                print(f"task [{args.id}] update log [{log_body.id}] to database failed.")
-                print(await resp.text())
-
-    async def stream_sockets(self, websocket: WebSocket) -> bool:
-        closed = False
-        try:
-            while not self._stopped:
-                pass  # TODO: read db to stream log with Socket wrapped
-        except:
-            closed = True
-        return closed
+        self._queue.put_nowait(log_body)
 
 
 def create_engine():
-    DBSocketHandler()
+    DBLogHandler()
     try:
         resp = requests.get(f"{args.server_url}/task/{args.id}/payload")
         payload = TaskCreationPayload(**resp.json())
@@ -101,7 +105,7 @@ def create_engine():
             reporter_config=payload.reporter_obj_config,
             results_dir=results_dir,
             state_change_callbacks=[scene_engine_state_change_callback],
-            log_handlers=[DBSocketHandler.get_instance()]
+            log_handlers=[DBLogHandler.get_instance()]
         )
         asyncio.create_task(scene_engine.run())
     except:
@@ -163,46 +167,26 @@ async def agents_connected(scene_engine: SceneEngine = Depends(SceneEngine.get_i
     )
 
 
-# @app.websocket("/ws")
-# async def stream_task_info(
+# @app.websocket("/ws/human/{agent_id}")
+# async def human_input(
 #     websocket: WebSocket,
-#     socket_handler: DBSocketHandler = Depends(DBSocketHandler.get_instance)
-# ) -> None:
-#     await websocket.accept()
-#     closed = await socket_handler.stream_sockets(websocket)
-#     if closed:
+#     agent_id: str,
+#     scene_engine: SceneEngine = Depends(SceneEngine.get_instance)
+# ):
+#     try:
+#         agent = scene_engine.scene.get_dynamic_agent(agent_id)
+#     except KeyError:
+#         await websocket.close(reason=f"agent [{agent_id}] not exists.")
 #         return
-#     while True:
-#         try:
-#             text = await websocket.receive_text()
-#             if text == "disconnect":
-#                 socket_handler.stop()
-#         except WebSocketDisconnect:
-#             return
-
-
-@app.websocket("/ws/human/{agent_id}")
-async def human_input(
-    websocket: WebSocket,
-    agent_id: str,
-    socket_handler: DBSocketHandler = Depends(DBSocketHandler.get_instance),
-    scene_engine: SceneEngine = Depends(SceneEngine.get_instance)
-):
-    try:
-        agent = scene_engine.scene.get_dynamic_agent(agent_id)
-    except KeyError:
-        await websocket.close(reason=f"agent [{agent_id}] not exists.")
-        return
-    if agent.connected:
-        await websocket.close(reason=f"agent [{agent_id}] already connected.")
-        return
-    connection = HumanConnection(
-        agent=agent,
-        socket=websocket,
-        socket_handler=socket_handler
-    )
-    await connection.connect()
-    await connection.run()
+#     if agent.connected:
+#         await websocket.close(reason=f"agent [{agent_id}] already connected.")
+#         return
+#     connection = HumanConnection(
+#         agent=agent,
+#         socket=websocket
+#     )
+#     await connection.connect()
+#     await connection.run()
 
 
 @app.post("/pause")
