@@ -21,7 +21,10 @@ class RagSceneLogBody(ActionLogBody):
 
 RagSceneConfig = SceneConfig.create_config_model(
     SCENE_DEFINITION,
-    additional_config_fields={"dataset_config": (DatasetConfig, Field(default=...))}
+    additional_config_fields={
+        "dataset_config": (DatasetConfig, Field(default=...)),
+        "debug_mode": (bool, Field(default=False, exclude=True))
+    }
 )
 
 
