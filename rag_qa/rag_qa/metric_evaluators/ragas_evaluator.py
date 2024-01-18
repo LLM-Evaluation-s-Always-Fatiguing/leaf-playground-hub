@@ -1,13 +1,12 @@
-import json
-from typing import Any, Dict, Literal, List
+from typing import Any, Dict, Literal, List, Optional, Union
 
 from datasets import Dataset, Features, Value, Sequence
 from ragas import evaluate
 
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
-from leaf_playground.data.log_body import ActionLogBody
-from leaf_playground.data.media import Json
+from leaf_playground.data.media import Json, Text
+from leaf_playground.data.message import Message
 
 from ..scene_definition import ExamineeAnswer, SCENE_DEFINITION
 
@@ -71,20 +70,26 @@ class RagasEvaluator(
         return ragas_evaluate
 
     @staticmethod
-    async def _record(log: ActionLogBody, evaluator: Any) -> Dict[_MetricName, RecordOutput]:
+    async def _record(
+        response: Message,
+        references: Optional[List[Message]],
+        ground_truth: Optional[Union[Json, Text]],
+        evaluator: Any,
+        **kwargs
+    ) -> Dict[_MetricName, RecordOutput]:
         result = {}
-        if isinstance(log.response, ExamineeAnswer) and log.ground_truth:
+        if isinstance(response, ExamineeAnswer) and ground_truth:
 
-            if isinstance(log.ground_truth, Json):
-                data: dict = log.ground_truth.data
+            if isinstance(ground_truth, Json):
+                data: dict = ground_truth.data
             else:
                 return result
 
-            question = log.references[0].content.text
+            question = references[0].content.text
             ground_truths = data.get('ground_truths', None)
             golden_answer = data.get('golden_answer', None)
-            agent_answer = log.response.content.data['answer']
-            contexts = log.response.content.data['contexts']
+            agent_answer = response.content.data['answer']
+            contexts = response.content.data['contexts']
 
             misc = {
                 'question': question,
@@ -92,7 +97,8 @@ class RagasEvaluator(
                 'contexts': contexts,
                 'ground_truths': ground_truths,
                 'golden_answer': golden_answer
-                # Actually, it’s not used here. The original answer from ragas is the evaluated answer, and it is placed here for future reference when displaying in the log.
+                # Actually, it’s not used here. The original answer from ragas is the evaluated answer,
+                # and it is placed here for future reference when displaying in the log.
             }
 
             features = Features({
@@ -123,7 +129,13 @@ class RagasEvaluator(
         return result
 
     @staticmethod
-    async def _compare(log: ActionLogBody, evaluator: Any) -> Dict[_MetricName, CompareOutput]:
+    async def _compare(
+        response: Message,
+        references: Optional[List[Message]],
+        ground_truth: Optional[Union[Json, Text]],
+        evaluator: Any,
+        **kwargs
+    ) -> Dict[_MetricName, CompareOutput]:
         return {}
 
 

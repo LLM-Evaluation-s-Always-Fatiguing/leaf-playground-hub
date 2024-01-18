@@ -417,6 +417,7 @@ SCENE_DEFINITION = SceneDefinition(
                 ActionDefinition(
                     name="describe_key",
                     description="描述关键词",
+                    exec_timeout=120,
                     signature=ActionSignatureDefinition(
                         parameters=[
                             ActionSignatureParameterDefinition(
@@ -443,6 +444,7 @@ SCENE_DEFINITION = SceneDefinition(
                 ActionDefinition(
                     name="predict_role",
                     description="角色预测",
+                    exec_timeout=120,
                     signature=ActionSignatureDefinition(
                         parameters=[
                             ActionSignatureParameterDefinition(
@@ -469,6 +471,7 @@ SCENE_DEFINITION = SceneDefinition(
                 ActionDefinition(
                     name="vote",
                     description="投票",
+                    exec_timeout=120,
                     signature=ActionSignatureDefinition(
                         parameters=[
                             ActionSignatureParameterDefinition(
