@@ -53,7 +53,7 @@ SYSTEM_TEMPLATE_DICT = {
 - 白板会被告知自己是白板角色。
 
 现在是推理阶段，每个玩家在之前已经按照顺序描述了自己的关键词，现在，每个玩家都在分析其他玩家的描述，尝试推理出有效信息。
-平民总是希望找出白板和卧底，卧底总是希望隐藏自己的身份，白板总是希望找出卧底。
+平民总是希望找出白板和卧底，卧底总是希望隐藏自己的身份，白板总是希望找出卧底且隐藏自己的身份。
 
 请用以下的评估标准，对当前玩家的推理过程和结果进行评分：
 
@@ -153,12 +153,21 @@ class AdvanceEvaluator(
         return result
 
     @staticmethod
-    def _reference_to_history_str(reference: List[Message]):
+    def _reference_to_history_str(references: List[Message]):
         result = ""
-        for msg in reference:
+        round_id = 0
+        for msg in references:
             if msg.sender_name == 'moderator':
-                continue
-            result += f"[{msg.sender_name} -> {msg.receiver_names}]: {msg.content.display_text}\n"
+                match msg.msg_type:
+                    case 'ModeratorAskForDescription':
+                        round_id += 1
+                        result += f"第{round_id}回合\n\n描述阶段\n"
+                    case 'ModeratorVoteSummary':
+                        result += f"投票阶段\n{msg.content.display_text}\n\n"
+            else:
+                match msg.msg_type:
+                    case 'PlayerDescription':
+                        result += f"{msg.sender_name}:\"{msg.content.display_text[msg.content.display_text.index(':')+1:] if ':' in msg.content.display_text else msg.content.display_text}\"\n"
         return result
 
     @staticmethod
@@ -184,13 +193,11 @@ class AdvanceEvaluator(
                     "name": answer.sender_name,
                     "answer": answer.content.text
                 }
-
                 for metric in SUPPORT_METRICS:
                     if metric.belonged_chain not in evaluator.activated_metrics or not metric.belonged_chain.startswith(
                         log.action_belonged_chain
                     ):
                         continue
-
                     value = await evaluator.evaluate(
                         system_template=SYSTEM_TEMPLATE_DICT[metric.name],
                         prompt_template=PROMPT_TEMPLATE[metric.name],

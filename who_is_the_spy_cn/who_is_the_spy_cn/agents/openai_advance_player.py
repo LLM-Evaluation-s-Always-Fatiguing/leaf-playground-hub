@@ -63,7 +63,6 @@ class OpenAIAdvancePlayer(
                     f"{history[0].content.text}"
                 )
             },
-            {"role": "system", "content": history[0].content.text}
         ]
 
         history_str = "以下是游戏进行的历史记录：\n"
@@ -73,8 +72,17 @@ class OpenAIAdvancePlayer(
                 content = content.replace(KEY_PLACEHOLDER, self.key_transcript)
             history_str += f"{msg.sender_name}: {content}\n"
 
-        description_following_str = f"现在轮到你描述你的关键词了，你的身份是{self.role.name}，你的关键词是{self.key_transcript}，根据之前其他人的发言，你尝试使用模糊的方式描述，让别的玩家无法识别出你的身份。接下来请你严格按照主持人的要求直接回复。"
-        prediction_following_str = f"现在轮到你预测其他玩家的身份了，你的身份是{self.role.name}，你的关键词是{self.key_transcript}，根据之前其他人的发言，你尝试简要分析每个玩家的身份和所持有的关键词。接下来请你严格按照主持人的要求直接回复。"
+        description_following_str = (
+            f"现在轮到你描述关键词了，你的关键词是{self.key_transcript}，你也可以根据之前的身份预测描述你认为正确的关键词。\n"
+            "根据之前其他人的发言，你尝试使用模糊的方式描述，让别的玩家无法识别出你的身份。\n"
+            "接下来请你严格按照主持人的要求直接回复。\n"
+        )
+        prediction_following_str = (
+            f"现在轮到你预测身份了，你的关键词是{self.key_transcript}。\n"
+            "根据之前其他人的发言，你简要地一步一步地分析每个玩家的身份和所持有的关键词。\n"
+            f"如果超过{1 if len(history[0].receivers) < 7 else 2}个玩家的描述与你的关键词有矛盾，你自己很有可能就是卧底，请根据你的关键词和其他玩家的描述推测正确的关键词。\n"
+            "接下来请你严格按照主持人的要求直接回复，且不超过200个字或字符。\n"
+        )
         vote_following_str = f"现在轮到你投票了，接下来请你严格按照主持人的要求直接投票。"
 
         if mode == 'description':
@@ -139,7 +147,7 @@ class OpenAIAdvancePlayer(
             )
             self.key_transcript = response.choices[0].message.content
             print(self.key_transcript)
-        # TODO: audio modal
+        # TODO: image mode change description to image & support audio modal
 
     async def describe_key(self, history: List[MessageTypes], receivers: List[Profile]) -> PlayerDescription:
         try:
