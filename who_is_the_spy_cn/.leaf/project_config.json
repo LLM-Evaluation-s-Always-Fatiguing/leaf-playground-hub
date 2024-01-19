@@ -1232,7 +1232,7 @@
                         "source_file": null
                     },
                     "is_human": false,
-                    "action_timeout_seconds": 30
+                    "action_timeout_seconds": 120
                 },
                 {
                     "cls_name": "OpenAIBasicPlayer",
@@ -1440,7 +1440,7 @@
                         "source_file": null
                     },
                     "is_human": false,
-                    "action_timeout_seconds": 30
+                    "action_timeout_seconds": 120
                 }
             ],
             "moderator": [
@@ -1620,5 +1620,5 @@
     "leaf_version": "0.4.0.dev0",
     "id": "who_is_the_spy_cn_6904abd3",
     "created_at": "unknown",
-    "last_update": "2024-01-18-03-54-38"
+    "last_update": "2024-01-19-09-47-36"
 }
