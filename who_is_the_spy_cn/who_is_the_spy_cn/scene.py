@@ -19,8 +19,6 @@ Player = Union[BaseAIPlayer, HumanPlayer]
 
 
 class WhoIsTheSpyLogBody(ActionLogBody):
-    references: Optional[List[MessageTypes]] = Field(default=None)
-    response: MessageTypes = Field(default=...)
     game_id: int = Field(default=...)
     round_id: int = Field(default=...)
 
@@ -39,8 +37,8 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
 
     log_body_class: Type[WhoIsTheSpyLogBody]
 
-    def __init__(self, config: config_cls, logger: Logger):
-        super().__init__(config=config, logger=logger)
+    def __init__(self, config: config_cls):
+        super().__init__(config=config)
 
         self.moderator: Moderator = self.static_agents["moderator"][0]
         self.players: List[Player] = self.agents["player"]
@@ -52,8 +50,8 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
                 references = self.message_pool.get_messages(message.sender)
             self.message_pool.put_message(message)
             log = self.log_body_class(
-                references=references,
-                response=message,
+                references=[ref.id for ref in references] if references else None,
+                response=message.id,
                 log_msg=log_msg,
                 action_belonged_chain=action_belonged_chain,
                 game_id=game_id,

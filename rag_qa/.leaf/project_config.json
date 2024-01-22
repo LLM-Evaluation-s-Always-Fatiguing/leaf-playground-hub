@@ -156,7 +156,8 @@
                                         },
                                         "is_comparison": false
                                     }
-                                ]
+                                ],
+                                "exec_timeout": 30
                             }
                         ],
                         "num_agents_range": [
@@ -541,8 +542,7 @@
                         "module": "rag_qa.agents.examiner",
                         "source_file": null
                     },
-                    "is_human": false,
-                    "action_timeout_seconds": 30
+                    "is_human": false
                 }
             ],
             "examinee": [
@@ -761,8 +761,7 @@
                         "module": "rag_qa.agents.openai_basic_examinee",
                         "source_file": null
                     },
-                    "is_human": false,
-                    "action_timeout_seconds": 30
+                    "is_human": false
                 }
             ]
         },
@@ -793,5 +792,8 @@
         ],
         "charts_metadata": null
     },
-    "leaf_version": "0.3.0.dev0"
+    "leaf_version": "0.4.0.dev0",
+    "id": "rag_qa_343d5c9f",
+    "created_at": "unknown",
+    "last_update": "2024-01-22-03-01-17"
 }

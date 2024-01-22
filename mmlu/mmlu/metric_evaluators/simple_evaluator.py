@@ -1,8 +1,9 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
-from leaf_playground.data.log_body import ActionLogBody
+from leaf_playground.data.media import Text
+from leaf_playground.data.message import Message
 
 from ..scene_definition import ExamineeAnswer, SCENE_DEFINITION
 
@@ -32,15 +33,17 @@ class SimpleEvaluator(
         return
 
     @staticmethod
-    async def _record(log: ActionLogBody, evaluator: Any) -> Dict[_MetricName, RecordOutput]:
+    async def _record(
+        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+    ) -> Dict[_MetricName, RecordOutput]:
         result = {}
-        if isinstance(log.response, ExamineeAnswer) and log.ground_truth:
-            answer = log.response.content.text
-            ground_truth = log.ground_truth.text
+        if isinstance(response, ExamineeAnswer) and ground_truth:
+            answer = response.content.text
+            ground_truth = ground_truth.text
             result["examinee.answer.accurate"] = RecordOutput(
                 record_value=answer.lower().startswith(ground_truth.lower()),
                 misc={
-                    "question": log.references[0].content.text,
+                    "question": references[0].content.text,
                     "agent_answer": answer,
                     "ground_truth": ground_truth
                 }
@@ -48,7 +51,9 @@ class SimpleEvaluator(
         return result
 
     @staticmethod
-    async def _compare(log: ActionLogBody, evaluator: Any) -> Dict[_MetricName, CompareOutput]:
+    async def _compare(
+        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+    ) -> Dict[_MetricName, CompareOutput]:
         return {}
 
 

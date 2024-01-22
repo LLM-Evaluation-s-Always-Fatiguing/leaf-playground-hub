@@ -1,10 +1,8 @@
-from logging import Logger
 from typing import Any, Dict, List, Optional, Type
 
-from leaf_playground.core.scene_definition import SceneConfig
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
-from leaf_playground.data.log_body import ActionLogBody
+from leaf_playground.data.media import Text
 from leaf_playground.data.message import Message
 from leaf_playground.eval_tools.general_open import GeneralOpenEvalToolConfig, GeneralOpenEvalTool
 from pydantic import Field
@@ -162,10 +160,12 @@ class AdvanceEvaluator(
         return result
 
     @staticmethod
-    async def _record(log: ActionLogBody, evaluator: Any) -> Dict[_MetricName, RecordOutput]:
+    async def _record(
+        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+    ) -> Dict[_MetricName, RecordOutput]:
         result = {}
-        if isinstance(log.response, ModeratorInitGameSummary):
-            summary = log.response
+        if isinstance(response, ModeratorInitGameSummary):
+            summary = response
             role_info = {}
             for role, player_names in summary.role2players.items():
                 for player_name in player_names:
@@ -175,19 +175,19 @@ class AdvanceEvaluator(
                     }
             evaluator.role_info = role_info
 
-        if isinstance(log.response, PlayerDescription) or isinstance(log.response, PlayerPrediction):
+        if isinstance(response, PlayerDescription) or isinstance(response, PlayerPrediction):
             try:
-                answer = log.response
+                answer = response
                 value_dict = {
                     "role_info": AdvanceEvaluator._role_info_to_str(evaluator.role_info),
-                    "history": AdvanceEvaluator._reference_to_history_str(log.references),
+                    "history": AdvanceEvaluator._reference_to_history_str(references),
                     "name": answer.sender_name,
                     "answer": answer.content.text
                 }
 
                 for metric in SUPPORT_METRICS:
                     if metric.belonged_chain not in evaluator.activated_metrics or not metric.belonged_chain.startswith(
-                        log.action_belonged_chain
+                        kwargs["action_belonged_chain"]
                     ):
                         continue
 
@@ -215,7 +215,9 @@ class AdvanceEvaluator(
         return result
 
     @staticmethod
-    async def _compare(log: ActionLogBody, evaluator: Any) -> Dict[_MetricName, CompareOutput]:
+    async def _compare(
+        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+    ) -> Dict[_MetricName, CompareOutput]:
         return {}
 
 

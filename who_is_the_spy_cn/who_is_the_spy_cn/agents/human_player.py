@@ -15,8 +15,7 @@ class HumanPlayerConfig(SceneHumanAgentConfig):
 class HumanPlayer(
     SceneHumanAgent,
     role_definition=ROLE_DEFINITION,
-    cls_description="参与谁是卧底游戏的人类玩家的代理",
-    action_exec_timeout=120
+    cls_description="参与谁是卧底游戏的人类玩家的代理"
 ):
     config_cls = HumanPlayerConfig
     config: config_cls

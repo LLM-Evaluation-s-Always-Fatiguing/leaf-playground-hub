@@ -15,8 +15,6 @@ from .scene_definition import *
 
 
 class MmluSceneLogBody(ActionLogBody):
-    references: Optional[List[MessageType]] = Field(default=None)
-    response: MessageType = Field(default=...)
     ground_truth: Optional[Text] = Field(default=None)
 
 
@@ -36,8 +34,8 @@ class MmluScene(
     config_cls = MmluSceneConfig
     config: config_cls
 
-    def __init__(self, config: config_cls, logger: Logger):
-        super().__init__(config=config, logger=logger)
+    def __init__(self, config: config_cls):
+        super().__init__(config=config)
 
         self.examiner: Examiner = self.static_agents["examiner"][0]
         self.examinees: List[AIBaseExaminee] = self.agents["examinee"]
@@ -58,8 +56,8 @@ class MmluScene(
             self.message_pool.put_message(answer)
             ground_truth = self.examiner.get_golden_answer(s.sample_id)
             log = self.log_body_class(
-                references=[s],
-                response=answer,
+                references=[s.id],
+                response=answer.id,
                 ground_truth=Text(text=ground_truth) if ground_truth else None,
                 log_msg=f"examinee [{examinee.name}] answers to sample [{s.sample_id}]",
                 action_belonged_chain=examinee.role_definition.get_action_definition("answer").belonged_chain
@@ -76,7 +74,7 @@ class MmluScene(
             self.logger.add_log(
                 self.log_body_class(
                     references=None,
-                    response=sample,
+                    response=sample.id,
                     ground_truth=None,
                     log_msg=f"examiner sends sample [{sample.sample_id}] to all examinees",
                     action_belonged_chain=self.examiner.role_definition.get_action_definition(
