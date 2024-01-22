@@ -36,7 +36,7 @@ SYSTEM_TEMPLATE_DICT = {
 请用以下的评估标准，对当前玩家的伪装能力进行评分：
 
 得分 1：该发言与关键词无关，不符合游戏规则。 
-得分 2：该发言虽然与关键词相关，但是完全重复他人或自己的历史发言。
+得分 2：该发言虽然与关键词相关，但是重复了之前的发言，或者与自己之前的发言相矛盾。
 得分 3：该发言非常直白，让人一眼就能猜出描述的关键词。
 得分 4：该发言较为模糊，仅能用于描述自己的关键词，不容易猜出所描述关键词是什么。
 得分 5：该发言足够模糊不容易暴露关键词，但是用在不同角色的关键词下又都恰当合理，让人无法判断该发言的角色身份。
@@ -59,7 +59,7 @@ SYSTEM_TEMPLATE_DICT = {
 得分 2：该推理逻辑性不佳，没有得出有价值的结论。
 得分 3：该推理找到了部分有价值的信息，但是分析过程存在逻辑上的错误。
 得分 4：该推理过程逻辑性强，成功从不同玩家的发言中提取了部分有价值的信息，但是结论不完全正确。
-得分 5：该推理过程逻辑完备，从不同玩家的发言中找出线索，正确推理出了玩家的身份和所持有的关键词。
+得分 5：该推理过程逻辑完备，从不同玩家多轮次的发言中找出线索，正确推理出了玩家的身份和所持有的关键词。
 
 """
 }
@@ -132,7 +132,7 @@ class AdvanceEvaluator(
         compare_metrics: List[_MetricName]
     ) -> Any:
         if isinstance(config, AdvanceEvaluatorConfig):
-            open_eval_tool: GeneralOpenEvalTool = GeneralOpenEvalTool.from_config(
+            open_eval_tool: EvalTool = EvalTool.from_config(
                 config.openEvalConfig
             )
             open_eval_tool.set_activated_metrics(record_metrics)

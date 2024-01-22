@@ -45,8 +45,7 @@
                                     "return_annotation": "None",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "init_game",
@@ -61,8 +60,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorInitGameSummary'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "introduce_game_rule",
@@ -77,8 +75,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorSummary'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "announce_game_start",
@@ -93,8 +90,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorSummary'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "assign_keys",
@@ -113,8 +109,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorKeyAssignment'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "ask_for_key_description",
@@ -129,8 +124,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorAskForDescription'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "valid_player_description",
@@ -149,8 +143,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorWarning'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "ask_for_role_prediction",
@@ -165,8 +158,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorAskForRolePrediction'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "summarize_players_prediction",
@@ -185,8 +177,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorPredictionSummary'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "ask_for_vote",
@@ -205,8 +196,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorAskForVote'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "summarize_player_votes",
@@ -233,8 +223,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorVoteSummary'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "check_if_game_over",
@@ -249,8 +238,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.ModeratorCheckGameOverSummary'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "reset_inner_status",
@@ -265,8 +253,7 @@
                                     "return_annotation": "<class 'inspect._empty'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             }
                         ],
                         "num_agents_range": [
@@ -296,8 +283,7 @@
                                     "return_annotation": "None",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             },
                             {
                                 "name": "describe_key",
@@ -337,8 +323,7 @@
                                         },
                                         "is_comparison": false
                                     }
-                                ],
-                                "exec_timeout": 120
+                                ]
                             },
                             {
                                 "name": "predict_role",
@@ -378,8 +363,7 @@
                                         },
                                         "is_comparison": false
                                     }
-                                ],
-                                "exec_timeout": 120
+                                ]
                             },
                             {
                                 "name": "vote",
@@ -402,8 +386,7 @@
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerVote'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 120
+                                "metrics": null
                             },
                             {
                                 "name": "reset_inner_status",
@@ -418,8 +401,7 @@
                                     "return_annotation": "<class 'inspect._empty'>",
                                     "is_static_method": false
                                 },
-                                "metrics": null,
-                                "exec_timeout": 30
+                                "metrics": null
                             }
                         ],
                         "num_agents_range": [
@@ -1052,7 +1034,8 @@
                         "module": "who_is_the_spy_cn.agents.human_player",
                         "source_file": null
                     },
-                    "is_human": true
+                    "is_human": true,
+                    "action_timeout_seconds": 120
                 },
                 {
                     "cls_name": "OpenAIAdvancePlayer",
@@ -1248,7 +1231,8 @@
                         "module": "who_is_the_spy_cn.agents.openai_advance_player",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 120
                 },
                 {
                     "cls_name": "OpenAIBasicPlayer",
@@ -1455,7 +1439,8 @@
                         "module": "who_is_the_spy_cn.agents.openai_basic_player",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 120
                 }
             ],
             "moderator": [
@@ -1468,7 +1453,8 @@
                         "module": "who_is_the_spy_cn.agents.moderator",
                         "source_file": null
                     },
-                    "is_human": false
+                    "is_human": false,
+                    "action_timeout_seconds": 30
                 }
             ]
         },
@@ -1594,6 +1580,13 @@
                         }
                     },
                     "properties": {
+                        "max_concurrency": {
+                            "default": 10,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
                         "openEvalConfig": {
                             "$ref": "#/$defs/GeneralOpenEvalToolConfig"
                         }
@@ -1634,5 +1627,5 @@
     "leaf_version": "0.4.0.dev0",
     "id": "who_is_the_spy_cn_6904abd3",
     "created_at": "unknown",
-    "last_update": "2024-01-22-03-01-30"
+    "last_update": "2024-01-22-02-59-03"
 }

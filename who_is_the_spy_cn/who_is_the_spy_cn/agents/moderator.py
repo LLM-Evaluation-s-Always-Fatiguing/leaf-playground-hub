@@ -9,9 +9,7 @@ from leaf_playground.core.scene_agent import SceneStaticAgentConfig, SceneStatic
 from ..data_utils import *
 from ..scene_definition import *
 
-
 ROLE_DEFINITION = SCENE_DEFINITION.get_role_definition("moderator")
-
 
 ModeratorConfig = SceneStaticAgentConfig.create_config_model(ROLE_DEFINITION)
 
@@ -159,11 +157,11 @@ class Moderator(
             f"## 角色和关键词分配结果\n\n"
             f"### 角色\n{role_assign_summary}\n\n### 关键词\n{key_assign_summary}"
         )
-        keys={
+        keys = {
             PlayerRoles.CIVILIAN.value: self.civilian_key.display_text,
             PlayerRoles.SPY.value: self.spy_key.display_text
         }
-        if has_blank: 
+        if has_blank:
             keys[PlayerRoles.BLANK.value] = '空白'
         return ModeratorInitGameSummary(
             sender=self.profile,
@@ -232,8 +230,9 @@ class Moderator(
             warn_msg = (
                 "你的描述中包含你的关键词，这是不被允许的，请重新进行描述。回复仅包含你对关键词的描述，不需要多余的回答。"
             )
-            if (player_role == PlayerRoles.CIVILIAN and self.civilian_key.text.lower() in description.content.text.lower()) or \
-                    (player_role == PlayerRoles.SPY and self.spy_key.text.lower() in description.content.text.lower()):
+            if (
+                player_role == PlayerRoles.CIVILIAN and self.civilian_key.text.lower() in description.content.text.lower()) or \
+                (player_role == PlayerRoles.SPY and self.spy_key.text.lower() in description.content.text.lower()):
                 return ModeratorWarning(
                     sender=self.profile,
                     receivers=[description.sender],
@@ -271,7 +270,7 @@ class Moderator(
             )
             extracted_predictions[prediction.sender_name] = {role.value: list(names) for role, names in preds.items()}
             summary = (
-                f"**{prediction.sender_name}({prediction.sender_id})'s prediction**\n"
+                f"**{prediction.sender_name}({prediction.sender_id})的预测是**\n"
                 f"- {PlayerRoles.SPY.value} :: {list(preds[PlayerRoles.SPY])}"
             )
             if has_blank:
@@ -283,7 +282,7 @@ class Moderator(
             if self.id2status[player.id] == PlayerStatus.ALIVE
         ]
         label = (
-            f"**Correct Answer**\n- {PlayerRoles.SPY.value} :: {alive_spies}"
+            f"**正确答案**\n- {PlayerRoles.SPY.value} :: {alive_spies}"
         )
         ground_truth = {PlayerRoles.SPY.value: alive_spies}
         if has_blank:
