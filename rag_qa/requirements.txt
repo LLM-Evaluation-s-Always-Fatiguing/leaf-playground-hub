@@ -1,3 +1,7 @@
 # all third party packages used in this project, except leaf-playground
 datasets
 ragas
+
+deepeval
+Dbias
+detoxify

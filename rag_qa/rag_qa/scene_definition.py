@@ -33,7 +33,13 @@ MetricType = Literal[
     "context_precision",
     "context_recall",
     "context_relevancy",
-    "faithfulness"
+    "faithfulness",
+    "bias",
+    "toxicity",
+    "hallucination",
+    "summarization",
+    "summarization_alignment",
+    "summarization_inclusion",
 ]
 
 MetricDefinitionList = [MetricDefinition(

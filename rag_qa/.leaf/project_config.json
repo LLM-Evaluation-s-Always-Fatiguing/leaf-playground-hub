@@ -155,6 +155,102 @@
                                             "default_kwargs": null
                                         },
                                         "is_comparison": false
+                                    },
+                                    {
+                                        "name": "bias",
+                                        "description": "bias of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "toxicity",
+                                        "description": "toxicity of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "hallucination",
+                                        "description": "hallucination of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "summarization",
+                                        "description": "summarization of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "summarization_alignment",
+                                        "description": "summarization_alignment of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
+                                    },
+                                    {
+                                        "name": "summarization_inclusion",
+                                        "description": "summarization_inclusion of examinee's answer and contexts",
+                                        "record_value_dtype": "FLOAT",
+                                        "record_display_type": "NumberInput",
+                                        "expect_resp_msg_type": "ExamineeAnswer",
+                                        "agg_method": {
+                                            "fn": {
+                                                "obj": "avg_fn",
+                                                "module": "rag_qa.scene_definition",
+                                                "source_file": null
+                                            },
+                                            "default_kwargs": null
+                                        },
+                                        "is_comparison": false
                                     }
                                 ],
                                 "exec_timeout": 30
@@ -204,6 +300,24 @@
                             },
                             "faithfulness": {
                                 "$ref": "#/$defs/MetricConfig"
+                            },
+                            "bias": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "toxicity": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "hallucination": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "summarization": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "summarization_alignment": {
+                                "$ref": "#/$defs/MetricConfig"
+                            },
+                            "summarization_inclusion": {
+                                "$ref": "#/$defs/MetricConfig"
                             }
                         },
                         "required": [
@@ -213,7 +327,13 @@
                             "context_precision",
                             "context_recall",
                             "context_relevancy",
-                            "faithfulness"
+                            "faithfulness",
+                            "bias",
+                            "toxicity",
+                            "hallucination",
+                            "summarization",
+                            "summarization_alignment",
+                            "summarization_inclusion"
                         ],
                         "title": "AnswerQuestionActionMetricsConfig",
                         "type": "object"
@@ -767,10 +887,791 @@
         },
         "evaluators_metadata": [
             {
+                "cls_name": "DeepEvalAnswerRelevancyEvaluator",
+                "description": "Retrieval augmented generation question answering examine scene answer relevancy evaluator powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalAnswerRelevancyEvalToolConfig": {
+                            "properties": {
+                                "backend_config": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/DeepEvalOpenAIModelConfig"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/DeepEvalAzureOpenAIModelConfig"
+                                        }
+                                    ],
+                                    "title": "Backend Config"
+                                },
+                                "include_reason": {
+                                    "default": true,
+                                    "title": "Include Reason",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "backend_config"
+                            ],
+                            "title": "DeepEvalAnswerRelevancyEvalToolConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalAzureOpenAIModelConfig": {
+                            "properties": {
+                                "endpoint": {
+                                    "title": "Endpoint",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "title": "Api Key",
+                                    "type": "string"
+                                },
+                                "deployment_name": {
+                                    "title": "Deployment Name",
+                                    "type": "string"
+                                },
+                                "deployment_model_version": {
+                                    "title": "Deployment Model Version",
+                                    "type": "string"
+                                },
+                                "api_version": {
+                                    "title": "Api Version",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "endpoint",
+                                "api_key",
+                                "deployment_name",
+                                "deployment_model_version",
+                                "api_version"
+                            ],
+                            "title": "DeepEvalAzureOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalOpenAIModelConfig": {
+                            "properties": {
+                                "model": {
+                                    "default": "gpt-4-1106-preview",
+                                    "enum": [
+                                        "gpt-4-1106-preview",
+                                        "gpt-4",
+                                        "gpt-4-32k",
+                                        "gpt-4-0613",
+                                        "gpt-4-32k-0613",
+                                        "gpt-3.5-turbo-1106",
+                                        "gpt-3.5-turbo",
+                                        "gpt-3.5-turbo-16k"
+                                    ],
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Key"
+                                }
+                            },
+                            "required": [
+                                "model"
+                            ],
+                            "title": "DeepEvalOpenAIModelConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalAnswerRelevancyEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalAnswerRelevancyEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalAnswerRelevancyEvalToolConfig"
+                    ],
+                    "title": "DeepEvalAnswerRelevancyEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalAnswerRelevancyEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_answer_relevancy_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.answer_relevancy"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalBiasEvaluator",
+                "description": "Bias metric powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalBiasEvalToolConfig": {
+                            "properties": {},
+                            "title": "DeepEvalBiasEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalBiasEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalBiasEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalBiasEvalToolConfig"
+                    ],
+                    "title": "DeepEvalBiasEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalBiasEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_bias_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.bias"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalContextualPrecisionEvaluator",
+                "description": "Retrieval augmented generation question answering examine scene contextual precision evaluator powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalAzureOpenAIModelConfig": {
+                            "properties": {
+                                "endpoint": {
+                                    "title": "Endpoint",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "title": "Api Key",
+                                    "type": "string"
+                                },
+                                "deployment_name": {
+                                    "title": "Deployment Name",
+                                    "type": "string"
+                                },
+                                "deployment_model_version": {
+                                    "title": "Deployment Model Version",
+                                    "type": "string"
+                                },
+                                "api_version": {
+                                    "title": "Api Version",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "endpoint",
+                                "api_key",
+                                "deployment_name",
+                                "deployment_model_version",
+                                "api_version"
+                            ],
+                            "title": "DeepEvalAzureOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalContextualPrecisionEvalToolConfig": {
+                            "properties": {
+                                "backend_config": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/DeepEvalOpenAIModelConfig"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/DeepEvalAzureOpenAIModelConfig"
+                                        }
+                                    ],
+                                    "title": "Backend Config"
+                                },
+                                "include_reason": {
+                                    "default": true,
+                                    "title": "Include Reason",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "backend_config"
+                            ],
+                            "title": "DeepEvalContextualPrecisionEvalToolConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalOpenAIModelConfig": {
+                            "properties": {
+                                "model": {
+                                    "default": "gpt-4-1106-preview",
+                                    "enum": [
+                                        "gpt-4-1106-preview",
+                                        "gpt-4",
+                                        "gpt-4-32k",
+                                        "gpt-4-0613",
+                                        "gpt-4-32k-0613",
+                                        "gpt-3.5-turbo-1106",
+                                        "gpt-3.5-turbo",
+                                        "gpt-3.5-turbo-16k"
+                                    ],
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Key"
+                                }
+                            },
+                            "required": [
+                                "model"
+                            ],
+                            "title": "DeepEvalOpenAIModelConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalContextualPrecisionEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalContextualPrecisionEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalContextualPrecisionEvalToolConfig"
+                    ],
+                    "title": "DeepEvalContextualPrecisionEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalContextualPrecisionEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_contextual_precision_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.context_precision"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalFaithfulnessEvaluator",
+                "description": "Retrieval augmented generation question answering examine scene faithfulness evaluator powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalAzureOpenAIModelConfig": {
+                            "properties": {
+                                "endpoint": {
+                                    "title": "Endpoint",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "title": "Api Key",
+                                    "type": "string"
+                                },
+                                "deployment_name": {
+                                    "title": "Deployment Name",
+                                    "type": "string"
+                                },
+                                "deployment_model_version": {
+                                    "title": "Deployment Model Version",
+                                    "type": "string"
+                                },
+                                "api_version": {
+                                    "title": "Api Version",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "endpoint",
+                                "api_key",
+                                "deployment_name",
+                                "deployment_model_version",
+                                "api_version"
+                            ],
+                            "title": "DeepEvalAzureOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalFaithfulnessEvalToolConfig": {
+                            "properties": {
+                                "backend_config": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/DeepEvalOpenAIModelConfig"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/DeepEvalAzureOpenAIModelConfig"
+                                        }
+                                    ],
+                                    "title": "Backend Config"
+                                },
+                                "include_reason": {
+                                    "default": true,
+                                    "title": "Include Reason",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "backend_config"
+                            ],
+                            "title": "DeepEvalFaithfulnessEvalToolConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalOpenAIModelConfig": {
+                            "properties": {
+                                "model": {
+                                    "default": "gpt-4-1106-preview",
+                                    "enum": [
+                                        "gpt-4-1106-preview",
+                                        "gpt-4",
+                                        "gpt-4-32k",
+                                        "gpt-4-0613",
+                                        "gpt-4-32k-0613",
+                                        "gpt-3.5-turbo-1106",
+                                        "gpt-3.5-turbo",
+                                        "gpt-3.5-turbo-16k"
+                                    ],
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Key"
+                                }
+                            },
+                            "required": [
+                                "model"
+                            ],
+                            "title": "DeepEvalOpenAIModelConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalFaithfulnessEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalFaithfulnessEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalFaithfulnessEvalToolConfig"
+                    ],
+                    "title": "DeepEvalFaithfulnessEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalFaithfulnessEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_faithfulness_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.faithfulness"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalHallucinationEvaluator",
+                "description": "Hallucination metric powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalHallucinationEvalToolConfig": {
+                            "properties": {},
+                            "title": "DeepEvalHallucinationEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalHallucinationEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalHallucinationEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalHallucinationEvalToolConfig"
+                    ],
+                    "title": "DeepEvalHallucinationEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalHallucinationEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_hallucination_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.hallucination"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalRagasEvaluator",
+                "description": "Retrieval augmented generation question answering examine scene evaluator powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalAzureOpenAIModelConfig": {
+                            "properties": {
+                                "endpoint": {
+                                    "title": "Endpoint",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "title": "Api Key",
+                                    "type": "string"
+                                },
+                                "deployment_name": {
+                                    "title": "Deployment Name",
+                                    "type": "string"
+                                },
+                                "deployment_model_version": {
+                                    "title": "Deployment Model Version",
+                                    "type": "string"
+                                },
+                                "api_version": {
+                                    "title": "Api Version",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "endpoint",
+                                "api_key",
+                                "deployment_name",
+                                "deployment_model_version",
+                                "api_version"
+                            ],
+                            "title": "DeepEvalAzureOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalOpenAIModelConfig": {
+                            "properties": {
+                                "model": {
+                                    "default": "gpt-4-1106-preview",
+                                    "enum": [
+                                        "gpt-4-1106-preview",
+                                        "gpt-4",
+                                        "gpt-4-32k",
+                                        "gpt-4-0613",
+                                        "gpt-4-32k-0613",
+                                        "gpt-3.5-turbo-1106",
+                                        "gpt-3.5-turbo",
+                                        "gpt-3.5-turbo-16k"
+                                    ],
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Key"
+                                }
+                            },
+                            "required": [
+                                "model"
+                            ],
+                            "title": "DeepEvalOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalRagasEvalToolConfig": {
+                            "properties": {
+                                "backend_config": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/DeepEvalOpenAIModelConfig"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/DeepEvalAzureOpenAIModelConfig"
+                                        }
+                                    ],
+                                    "title": "Backend Config"
+                                }
+                            },
+                            "required": [
+                                "backend_config"
+                            ],
+                            "title": "DeepEvalRagasEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "ragasEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalRagasEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "ragasEvalToolConfig"
+                    ],
+                    "title": "DeepEvalRagasEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalRagasEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_ragas_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.answer_relevancy",
+                    "examinee.answer_question.context_precision",
+                    "examinee.answer_question.context_recall",
+                    "examinee.answer_question.faithfulness"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalSummarizationEvaluator",
+                "description": "Summarization evaluator powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalAzureOpenAIModelConfig": {
+                            "properties": {
+                                "endpoint": {
+                                    "title": "Endpoint",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "title": "Api Key",
+                                    "type": "string"
+                                },
+                                "deployment_name": {
+                                    "title": "Deployment Name",
+                                    "type": "string"
+                                },
+                                "deployment_model_version": {
+                                    "title": "Deployment Model Version",
+                                    "type": "string"
+                                },
+                                "api_version": {
+                                    "title": "Api Version",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "endpoint",
+                                "api_key",
+                                "deployment_name",
+                                "deployment_model_version",
+                                "api_version"
+                            ],
+                            "title": "DeepEvalAzureOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalOpenAIModelConfig": {
+                            "properties": {
+                                "model": {
+                                    "default": "gpt-4-1106-preview",
+                                    "enum": [
+                                        "gpt-4-1106-preview",
+                                        "gpt-4",
+                                        "gpt-4-32k",
+                                        "gpt-4-0613",
+                                        "gpt-4-32k-0613",
+                                        "gpt-3.5-turbo-1106",
+                                        "gpt-3.5-turbo",
+                                        "gpt-3.5-turbo-16k"
+                                    ],
+                                    "title": "Model",
+                                    "type": "string"
+                                },
+                                "api_key": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "title": "Api Key"
+                                }
+                            },
+                            "required": [
+                                "model"
+                            ],
+                            "title": "DeepEvalOpenAIModelConfig",
+                            "type": "object"
+                        },
+                        "DeepEvalSummarizationEvalToolConfig": {
+                            "properties": {
+                                "backend_config": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/$defs/DeepEvalOpenAIModelConfig"
+                                        },
+                                        {
+                                            "$ref": "#/$defs/DeepEvalAzureOpenAIModelConfig"
+                                        }
+                                    ],
+                                    "title": "Backend Config"
+                                },
+                                "assessment_questions": {
+                                    "anyOf": [
+                                        {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "description": "a list of close-ended questions that can be answered with either a 'yes' or a 'no'. These are questions you want your summary to be able to ideally answer, and is especially helpful if you already know what a good summary for your use case looks like. If assessment_questions is not provided, we will generate a set of assessment_questions for you at evaluation time. The assessment_questions are used to calculate the inclusion_score.",
+                                    "title": "Assessment Questions"
+                                },
+                                "n": {
+                                    "anyOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "default": null,
+                                    "description": "the number of questions to generate when calculating the alignment_score and inclusion_score, defaulted to 5.",
+                                    "title": "N"
+                                }
+                            },
+                            "required": [
+                                "backend_config"
+                            ],
+                            "title": "DeepEvalSummarizationEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalSummarizationEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalSummarizationEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalSummarizationEvalToolConfig"
+                    ],
+                    "title": "DeepEvalSummarizationEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalSummarizationEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_summarization_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.summarization",
+                    "examinee.answer_question.summarization_alignment",
+                    "examinee.answer_question.summarization_inclusion"
+                ]
+            },
+            {
+                "cls_name": "DeepEvalToxicityEvaluator",
+                "description": "Toxicity metric powered by DeepEval.",
+                "config_schema": {
+                    "$defs": {
+                        "DeepEvalToxicityEvalToolConfig": {
+                            "properties": {},
+                            "title": "DeepEvalToxicityEvalToolConfig",
+                            "type": "object"
+                        }
+                    },
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
+                        "deepEvalToxicityEvalToolConfig": {
+                            "$ref": "#/$defs/DeepEvalToxicityEvalToolConfig"
+                        }
+                    },
+                    "required": [
+                        "deepEvalToxicityEvalToolConfig"
+                    ],
+                    "title": "DeepEvalToxicityEvaluatorConfig",
+                    "type": "object"
+                },
+                "obj_for_import": {
+                    "obj": "DeepEvalToxicityEvaluator",
+                    "module": "rag_qa.metric_evaluators.deep_eval_toxicity_evaluator",
+                    "source_file": null
+                },
+                "metrics": [
+                    "examinee.answer_question.toxicity"
+                ]
+            },
+            {
                 "cls_name": "RagasEvaluator",
                 "description": "Retrieval augmented generation question answering examine scene evaluator powered by ragas.",
                 "config_schema": {
-                    "properties": {},
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        }
+                    },
                     "title": "RagasEvaluatorConfig",
                     "type": "object"
                 },
@@ -786,14 +1687,20 @@
                     "examinee.answer_question.context_precision",
                     "examinee.answer_question.context_recall",
                     "examinee.answer_question.context_relevancy",
-                    "examinee.answer_question.faithfulness"
+                    "examinee.answer_question.faithfulness",
+                    "examinee.answer_question.bias",
+                    "examinee.answer_question.toxicity",
+                    "examinee.answer_question.hallucination",
+                    "examinee.answer_question.summarization",
+                    "examinee.answer_question.summarization_alignment",
+                    "examinee.answer_question.summarization_inclusion"
                 ]
             }
         ],
         "charts_metadata": null
     },
-    "leaf_version": "0.4.0.dev0",
+    "leaf_version": "0.4.1",
     "id": "rag_qa_343d5c9f",
     "created_at": "unknown",
-    "last_update": "2024-01-22-03-01-17"
+    "last_update": "2024-01-25-10-30-05"
 }
