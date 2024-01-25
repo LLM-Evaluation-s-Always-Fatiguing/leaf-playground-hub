@@ -27,9 +27,9 @@ ANSWER_COL = "answer"
 
 
 class DatasetConfig(_Config):
-    dataset_name: DS_NAMES = Field(default=getattr(DS_NAMES, "abstract_algebra"))
-    dataset_split: DS_SPLITS = Field(default=getattr(DS_SPLITS, "test"))
-    num_samples: int = Field(default=-1)
+    dataset_name: DS_NAMES = Field(json_schema_extra={"default": getattr(DS_NAMES, "abstract_algebra")})
+    dataset_split: DS_SPLITS = Field(json_schema_extra={"default": getattr(DS_SPLITS, "test")})
+    num_samples: int = Field(json_schema_extra={"default": -1})
 
     def model_post_init(self, __context: Any) -> None:
         if self.num_samples < -1 or self.num_samples == 0:
