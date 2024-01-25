@@ -24,7 +24,7 @@ class AccuracyChart(Chart, chart_name="accuracy", supported_metric_names=["exami
             agent_config in role_config.agents_config
         }
 
-        data = self._transform_data(metrics['metrics'], color_mapping)
+        data = self._transform_data(metrics['merged_metrics'], color_mapping)
 
         return chart.generate(data)
 

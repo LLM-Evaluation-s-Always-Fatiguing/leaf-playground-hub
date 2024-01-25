@@ -714,6 +714,13 @@
                         }
                     },
                     "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        },
                         "regexEvalToolConfig": {
                             "$ref": "#/$defs/RegexEvalToolConfig"
                         }
@@ -737,7 +744,15 @@
                 "cls_name": "SimpleEvaluator",
                 "description": "A simple evaluator (determines whether the answer starts with the reference answer, ignoring case sensitivity).",
                 "config_schema": {
-                    "properties": {},
+                    "properties": {
+                        "max_concurrency": {
+                            "default": 1,
+                            "exclusiveMaximum": 20,
+                            "exclusiveMinimum": 0,
+                            "title": "Max Concurrency",
+                            "type": "integer"
+                        }
+                    },
                     "title": "SimpleEvaluatorConfig",
                     "type": "object"
                 },
@@ -766,8 +781,8 @@
             }
         ]
     },
-    "leaf_version": "0.4.0.dev0",
-    "last_update": "2024-01-22-03-01-10",
+    "leaf_version": "0.4.1",
+    "last_update": "2024-01-25-03-23-57",
     "id": "mmlu_1554aa26",
     "created_at": "unknown"
 }

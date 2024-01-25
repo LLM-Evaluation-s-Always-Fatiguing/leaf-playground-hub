@@ -29,7 +29,7 @@ class AdvanceChart(Chart, chart_name="advance", supported_metric_names=SUPPORT_M
 
         chart = GroupedBar(mode="value", max_value=5)
 
-        data = self._transform_data(metrics['metrics'])
+        data = self._transform_data(metrics['merged_metrics'])
 
         return chart.generate(data)
 
