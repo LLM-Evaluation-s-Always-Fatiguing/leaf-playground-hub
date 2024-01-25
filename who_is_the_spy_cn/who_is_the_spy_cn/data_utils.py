@@ -3,10 +3,10 @@ from os import listdir
 from os.path import abspath, isdir, join
 from typing import Dict, List
 
-from leaf_playground_cli.utils import get_static_dir
+from leaf_playground_cli.utils import get_dataset_dir
 
 
-key_dir = join(get_static_dir(abspath(__file__)), "keys")
+key_dir = join(get_dataset_dir(abspath(__file__)), "keys")
 
 
 def load_textual_key() -> List[Dict[str, str]]:
