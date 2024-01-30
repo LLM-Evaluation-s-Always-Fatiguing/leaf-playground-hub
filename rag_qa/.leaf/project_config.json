@@ -773,7 +773,7 @@
                     "properties": {
                         "max_concurrency": {
                             "default": 1,
-                            "exclusiveMaximum": 20,
+                            "exclusiveMaximum": 32,
                             "exclusiveMinimum": 0,
                             "title": "Max Concurrency",
                             "type": "integer"
@@ -800,8 +800,8 @@
         ],
         "charts_metadata": null
     },
-    "leaf_version": "0.4.1",
+    "leaf_version": "0.5.0.dev0",
     "id": "rag_qa_343d5c9f",
     "created_at": "unknown",
-    "last_update": "2024-01-25-03-24-05"
+    "last_update": "2024-01-30-11-15-23"
 }

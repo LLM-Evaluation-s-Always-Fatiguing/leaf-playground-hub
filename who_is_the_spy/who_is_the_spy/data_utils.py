@@ -1,13 +1,16 @@
 import json
-import os
+from os import listdir
+from os.path import abspath, isdir, join
 from typing import Dict, List
 
+from leaf_playground_cli.utils.path_utils import get_dataset_dir
 
-_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "keys")
+
+key_dir = join(get_dataset_dir(abspath(__file__)), "keys")
 
 
 def load_textual_key() -> List[Dict[str, str]]:
-    textual_key_file = os.path.join(_root, "text.jsonl")
+    textual_key_file = join(key_dir, "text.jsonl")
     keys = []
     with open(textual_key_file, "r", encoding="utf-8") as f:
         for line in f.readlines():
@@ -16,11 +19,12 @@ def load_textual_key() -> List[Dict[str, str]]:
 
 
 def load_image_key() -> List[Dict[str, str]]:
+    image_dir = join(key_dir, "image")
     keys = []
-    for dir_ in os.listdir(os.path.join(_root, "image")):
-        dir_ = os.path.join(_root, "image", dir_)
-        if os.path.isdir(dir_):
-            keys.append({"Civilian": os.path.join(dir_, "Civilian.jpg"), "Spy": os.path.join(dir_, "Spy.jpg")})
+    for dir_ in listdir(image_dir):
+        dir_ = join(image_dir, dir_)
+        if isdir(dir_):
+            keys.append({"Civilian": join(dir_, "Civilian.jpg"), "Spy": join(dir_, "Spy.jpg")})
     return keys
 
 
