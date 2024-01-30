@@ -718,7 +718,7 @@
                     "properties": {
                         "max_concurrency": {
                             "default": 1,
-                            "exclusiveMaximum": 20,
+                            "exclusiveMaximum": 32,
                             "exclusiveMinimum": 0,
                             "title": "Max Concurrency",
                             "type": "integer"
@@ -749,7 +749,7 @@
                     "properties": {
                         "max_concurrency": {
                             "default": 1,
-                            "exclusiveMaximum": 20,
+                            "exclusiveMaximum": 32,
                             "exclusiveMinimum": 0,
                             "title": "Max Concurrency",
                             "type": "integer"
@@ -783,8 +783,8 @@
             }
         ]
     },
-    "leaf_version": "0.4.1",
-    "last_update": "2024-01-25-07-35-49",
+    "leaf_version": "0.5.0.dev0",
+    "last_update": "2024-01-30-11-15-34",
     "id": "mmlu_1554aa26",
     "created_at": "unknown"
 }
