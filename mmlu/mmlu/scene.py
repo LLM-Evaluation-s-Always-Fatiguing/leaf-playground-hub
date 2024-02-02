@@ -45,8 +45,6 @@ class MmluScene(
             try:
                 answer: ExamineeAnswer = await examinee.answer(sample=s, examiner=self.examiner.profile)
             except:
-                if self.config.debug_mode:
-                    raise
                 answer: ExamineeAnswer = ExamineeAnswer(
                     sender=examinee.profile,
                     receivers=[self.examiner.profile],
