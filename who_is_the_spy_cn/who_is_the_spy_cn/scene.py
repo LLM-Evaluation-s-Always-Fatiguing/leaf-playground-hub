@@ -142,7 +142,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
         async def player_vote(player_: Player) -> PlayerVote:
             history = self.message_pool.get_messages(player_.profile)
             try:
-                vote = await player_.vote(history, self.moderator.profile)
+                vote = await player_.vote(history, self.moderator.profile, [p.name for p in self.players])
             except:
                 if self.config.debug_mode:
                     raise

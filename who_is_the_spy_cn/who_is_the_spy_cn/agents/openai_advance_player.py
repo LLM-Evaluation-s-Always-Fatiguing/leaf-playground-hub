@@ -161,7 +161,7 @@ class OpenAIAdvancePlayer(
             content=Text(text=prediction, display_text=prediction)
         )
 
-    async def vote(self, history: List[MessageTypes], moderator: Profile) -> PlayerVote:
+    async def vote(self, history: List[MessageTypes], moderator: Profile, player_names: List[str]) -> PlayerVote:
         vote = await self._respond(history, 'vote')
         return PlayerVote(
             sender=self.profile,

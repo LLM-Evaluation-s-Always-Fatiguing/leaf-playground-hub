@@ -1,8 +1,10 @@
 import asyncio
+import json
 import os
 import signal
 import traceback
 from datetime import datetime
+from typing import Optional
 
 import aiohttp
 import requests
@@ -10,7 +12,7 @@ import sys
 from argparse import ArgumentParser
 from contextlib import asynccontextmanager
 
-from fastapi import status, FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import status, FastAPI, Depends, HTTPException, WebSocket
 from fastapi.responses import JSONResponse
 from leaf_playground._type import Singleton
 from leaf_playground.core.workers import Logger, LogHandler
@@ -19,6 +21,8 @@ from leaf_playground.core.scene_engine import SceneEngine, SceneEngineState
 from leaf_playground.data.log_body import LogBody, ActionLogBody
 from leaf_playground.data.message import MessagePool
 from leaf_playground_cli.server.task import *
+from leaf_playground_cli.utils.debug_utils import maybe_set_debugger, IDEType, DebuggerConfig
+
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -29,7 +33,89 @@ parser.add_argument("--host", type=str)
 parser.add_argument("--secret_key", type=str)
 parser.add_argument("--server_url", type=str)
 parser.add_argument("--docker", action="store_true")
+parser.add_argument("--debug", action="store_true")
+parser.add_argument("--debug_ide", type=str, choices=["pycharm", "vscode"])
+parser.add_argument("--debugger_server_host", type=str, default="localhost")
+parser.add_argument("--debugger_server_port", type=int, default=3457)
+parser.add_argument("--debugger_server_port_evaluator", type=int, default=3458)
 args = parser.parse_args()
+
+
+debugger_config = DebuggerConfig(
+    ide_type=IDEType.PyCharm if args.debug_ide == "pycharm" else IDEType.VSCode,
+    host=args.debugger_server_host,
+    port=args.debugger_server_port,
+    debug=args.debug
+)
+if args.debug:
+    os.environ["EVALUATOR_DEBUG"] = "True"
+    os.environ["EVALUATOR_DEBUG_IDE"] = args.debug_ide
+    os.environ["EVALUATOR_DEBUGGER_SERVER_HOST"] = args.debugger_server_host
+    os.environ["EVALUATOR_DEBUGGER_SERVER_PORT"] = str(args.debugger_server_port_evaluator)
+
+
+def save_task_results_to_db(self, save_dir=None):
+    scene_config = self.get_scene_config(mode="dict")
+    evaluator_configs = self.get_evaluator_configs(mode="dict")
+
+    logs = {}
+    for exporter in self.scene.scene_definition.log_exporters:
+        data = exporter.export(self.logger, save_dir)
+        if data:
+            logs[f"{exporter.file_name}.{exporter.extension}"] = data
+
+    metrics, charts = self.reporter.generate_reports(
+        scene_config=self.get_scene_config(mode="pydantic"),
+        evaluator_configs=self.get_evaluator_configs(mode="pydantic"),
+        logs=self.logger.logs,
+    )
+    metrics = {
+        "metrics": {
+            name: (
+                [each.model_dump(mode="json") for each in data]
+                if isinstance(data, list)
+                else data.model_dump(mode="json")
+            )
+            for name, data in metrics["metrics"].items()
+        },
+        "human_metrics": {
+            name: (
+                [each.model_dump(mode="json") for each in data]
+                if isinstance(data, list)
+                else data.model_dump(mode="json")
+            )
+            for name, data in metrics["human_metrics"].items()
+        },
+        "merged_metrics": {
+            name: (
+                [each.model_dump(mode="json") for each in data]
+                if isinstance(data, list)
+                else data.model_dump(mode="json")
+            )
+            for name, data in metrics["merged_metrics"].items()
+        },
+    }
+
+    task_results = TaskResults(
+        id=args.id,
+        scene_config=scene_config,
+        evaluator_configs=evaluator_configs,
+        metrics=metrics,
+        charts=charts,
+        logs=logs
+    )
+
+    try:
+        requests.post(
+            f"{args.server_url}/task/{args.id}/results/save?secret_key={args.secret_key}",
+            headers={'Content-Type': 'application/json'},
+            json=task_results.model_dump(mode="json", by_alias=True)
+        )
+    except:
+        traceback.print_exc()
+
+
+SceneEngine.save = save_task_results_to_db
 
 
 class DBLogHandler(Singleton, LogHandler):
@@ -93,17 +179,11 @@ def create_engine():
         resp = requests.get(f"{args.server_url}/task/{args.id}/payload")
         payload = TaskCreationPayload(**resp.json())
 
-        if args.docker:
-            results_dir = "/tmp/result"
-        else:
-            resp = requests.get(f"{args.server_url}/task/{args.id}/results_dir")
-            results_dir = resp.json()["results_dir"]
-
         scene_engine = SceneEngine(
             scene_config=payload.scene_obj_config,
             evaluators_config=payload.metric_evaluator_objs_config,
             reporter_config=payload.reporter_obj_config,
-            results_dir=results_dir,
+            results_dir=None,
             state_change_callbacks=[scene_engine_state_change_callback],
             log_handlers=[DBLogHandler.get_instance()]
         )
@@ -144,15 +224,24 @@ class AppManager(Singleton):
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    create_engine()
-    app_manager = AppManager()
-
     try:
-        yield
+        maybe_set_debugger(
+            debugger_config,
+            patch_multiprocessing=False
+        )
+
+        create_engine()
+        app_manager = AppManager()
     except:
         traceback.print_exc()
+        update_task_status(task_status="failed")
+    else:
+        try:
+            yield
+        except:
+            traceback.print_exc()
 
-    app_manager.shutdown_task.cancel()
+        app_manager.shutdown_task.cancel()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -220,7 +309,7 @@ async def close_engine(
 ):
     if scene_engine.state not in [SceneEngineState.INTERRUPTED, SceneEngineState.FAILED, SceneEngineState.FINISHED]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="task not done!")
-    scene_engine.save(scene_engine._results_dir)
+    save_task_results_to_db(scene_engine)
     app_manager.shutdown_event.set()
 
 
@@ -228,7 +317,7 @@ async def close_engine(
 async def save_engine(
     scene_engine: SceneEngine = Depends(SceneEngine.get_instance)
 ):
-    scene_engine.save(scene_engine._results_dir)
+    save_task_results_to_db(scene_engine)
 
 
 @app.post("/logs/{log_id}/record/metric/update")

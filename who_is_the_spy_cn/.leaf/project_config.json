@@ -397,6 +397,10 @@
                                         {
                                             "name": "moderator",
                                             "annotation": "<class 'leaf_playground.data.profile.Profile'>"
+                                        },
+                                        {
+                                            "name": "player_names",
+                                            "annotation": "typing.List[str]"
                                         }
                                     ],
                                     "return_annotation": "<class 'who_is_the_spy_cn.scene_definition.PlayerVote'>",
@@ -1638,8 +1642,8 @@
             }
         ]
     },
-    "leaf_version": "0.4.1",
+    "leaf_version": "0.5.0.dev1",
     "id": "who_is_the_spy_cn_6904abd3",
     "created_at": "unknown",
-    "last_update": "2024-01-25-03-23-49"
+    "last_update": "2024-02-06-08-20-06"
 }

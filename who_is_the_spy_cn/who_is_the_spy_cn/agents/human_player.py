@@ -42,8 +42,8 @@ class HumanPlayer(
             content=Text(text=prediction, display_text=prediction)
         )
 
-    async def vote(self, history: List[MessageTypes], moderator: Profile) -> PlayerVote:
-        vote = (await self.wait_human_text_input()) or ""
+    async def vote(self, history: List[MessageTypes], moderator: Profile, player_names: List[str]) -> PlayerVote:
+        vote = (await self.wait_human_text_input(PlayerVote.generate_data_schema(player_names))) or ""
         return PlayerVote(
             sender=self.profile,
             receivers=[moderator, self.profile],

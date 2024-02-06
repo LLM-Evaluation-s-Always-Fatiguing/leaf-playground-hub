@@ -39,7 +39,7 @@ class BaseAIPlayer(
         pass
 
     @abstractmethod
-    async def vote(self, history: List[MessageTypes], moderator: Profile) -> PlayerVote:
+    async def vote(self, history: List[MessageTypes], moderator: Profile, player_names: List[str]) -> PlayerVote:
         pass
 
     @abstractmethod

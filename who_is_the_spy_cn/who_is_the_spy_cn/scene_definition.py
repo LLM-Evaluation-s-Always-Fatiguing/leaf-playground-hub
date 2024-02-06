@@ -1,10 +1,11 @@
+import json
 from enum import Enum
 from typing import Dict, List, Literal, Optional, Set, Union
 
 from leaf_playground.core.scene_definition.definitions.metric import _RecordData
 from typing_extensions import Annotated
 
-from pydantic import Field
+from pydantic import Field, BaseModel, create_model
 
 from leaf_playground.core.scene_definition import *
 from leaf_playground.data.environment import ConstantEnvironmentVariable
@@ -200,7 +201,9 @@ class PlayerPrediction(TextMessage):
                 content = content.split("：")[0].strip()
                 for pred in content.split(","):
                     pred = pred.strip()
-                    names.add(get_most_similar_text(pred, [each.strip() for each in player_names])) if "[]" not in pred else names.add("")
+                    names.add(
+                        get_most_similar_text(pred, [each.strip() for each in player_names])
+                    ) if "[]" not in pred else names.add("")
             return names
 
         preds = {PlayerRoles.SPY: retrieve_names("卧底：")}
@@ -211,6 +214,17 @@ class PlayerPrediction(TextMessage):
 
 class PlayerVote(TextMessage):
     msg_type: Literal["PlayerVote"] = Field(default="PlayerVote")
+
+    @staticmethod
+    def generate_data_schema(player_names: List[str]) -> str:
+        CurrentPlayers = Literal[tuple(player_names)]
+
+        DynamicUserModel = create_model(
+            "卧底投票",
+            vote_target=(CurrentPlayers, Field(..., description="选择玩家进行投票"))
+        )
+
+        return json.dumps(DynamicUserModel.model_json_schema(), ensure_ascii=False, indent=2)
 
     def get_vote(self, player_names: List[str]) -> str:
         vote = self.content.text
@@ -481,6 +495,10 @@ SCENE_DEFINITION = SceneDefinition(
                             ActionSignatureParameterDefinition(
                                 name="moderator",
                                 annotation=Profile
+                            ),
+                            ActionSignatureParameterDefinition(
+                                name="player_names",
+                                annotation=List[str]
                             )
                         ],
                         return_annotation=PlayerVote
