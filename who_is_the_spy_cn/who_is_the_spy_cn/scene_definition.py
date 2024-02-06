@@ -216,7 +216,7 @@ class PlayerVote(TextMessage):
     msg_type: Literal["PlayerVote"] = Field(default="PlayerVote")
 
     @staticmethod
-    def generate_data_schema(player_names: List[str]) -> str:
+    def generate_data_schema(player_names: List[str]) -> dict:
         CurrentPlayers = Literal[tuple(player_names)]
 
         DynamicUserModel = create_model(
@@ -224,7 +224,7 @@ class PlayerVote(TextMessage):
             vote_target=(CurrentPlayers, Field(..., description="选择玩家进行投票"))
         )
 
-        return json.dumps(DynamicUserModel.model_json_schema(), ensure_ascii=False, indent=2)
+        return DynamicUserModel.model_json_schema()
 
     def get_vote(self, player_names: List[str]) -> str:
         vote = self.content.text
