@@ -485,11 +485,8 @@
                     "description": "Examinee agent using OpenAI API to answer questions",
                     "config_schema": {
                         "$defs": {
-                            "BackendConfig": {
+                            "AzureOpenAIClientConfig": {
                                 "properties": {
-                                    "model": {
-                                        "$ref": "#/$defs/Models"
-                                    },
                                     "api_key": {
                                         "anyOf": [
                                             {
@@ -513,6 +510,102 @@
                                         ],
                                         "default": null,
                                         "title": "Organization"
+                                    },
+                                    "chat_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Chat Model"
+                                    },
+                                    "completion_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Completion Model"
+                                    },
+                                    "embedding_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Embedding Model"
+                                    },
+                                    "vision_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Vision Model"
+                                    },
+                                    "image_generation_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Image Generation Model"
+                                    },
+                                    "tts_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Tts Model"
+                                    },
+                                    "whisper_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Whisper Model"
+                                    },
+                                    "moderation_model": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Moderation Model"
                                     },
                                     "base_url": {
                                         "anyOf": [
@@ -551,6 +644,37 @@
                                         "title": "Azure Deployment"
                                     },
                                     "api_version": {
+                                        "default": "look_environment_variables",
+                                        "title": "Api Version",
+                                        "type": "string"
+                                    }
+                                },
+                                "title": "AzureOpenAIClientConfig",
+                                "type": "object"
+                            },
+                            "CustomOpenAIBackendConfig": {
+                                "properties": {
+                                    "client_config": {
+                                        "anyOf": [
+                                            {
+                                                "$ref": "#/$defs/CustomOpenAIClientConfig"
+                                            },
+                                            {
+                                                "$ref": "#/$defs/AzureOpenAIClientConfig"
+                                            }
+                                        ],
+                                        "title": "Client Config"
+                                    }
+                                },
+                                "required": [
+                                    "client_config"
+                                ],
+                                "title": "CustomOpenAIBackendConfig",
+                                "type": "object"
+                            },
+                            "CustomOpenAIClientConfig": {
+                                "properties": {
+                                    "api_key": {
                                         "anyOf": [
                                             {
                                                 "type": "string"
@@ -560,41 +684,130 @@
                                             }
                                         ],
                                         "default": null,
-                                        "title": "Api Version"
+                                        "title": "Api Key"
                                     },
-                                    "is_azure": {
-                                        "default": false,
-                                        "title": "Is Azure",
-                                        "type": "boolean"
+                                    "organization": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Organization"
                                     },
-                                    "max_retries": {
-                                        "default": 2,
-                                        "title": "Max Retries",
-                                        "type": "integer"
+                                    "chat_model": {
+                                        "enum": [
+                                            "gpt-3.5-turbo-0125",
+                                            "gpt-3.5-turbo-1106",
+                                            "gpt-4-0125-preview",
+                                            "gpt-4-1106-preview",
+                                            "gpt-4-0613",
+                                            "gpt-4-32k-0613"
+                                        ],
+                                        "title": "Chat Model",
+                                        "type": "string"
                                     },
-                                    "timeout": {
-                                        "default": 60,
-                                        "title": "Timeout",
-                                        "type": "number"
+                                    "completion_model": {
+                                        "const": "gpt-3.5-turbo-instruct",
+                                        "default": "gpt-3.5-turbo-instruct",
+                                        "title": "Completion Model"
+                                    },
+                                    "embedding_model": {
+                                        "anyOf": [
+                                            {
+                                                "enum": [
+                                                    "text-embedding-3-large",
+                                                    "text-embedding-3-small",
+                                                    "text-embedding-ada-002"
+                                                ],
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Embedding Model"
+                                    },
+                                    "vision_model": {
+                                        "anyOf": [
+                                            {
+                                                "const": "gpt-4-1106-vision-preview"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Vision Model"
+                                    },
+                                    "image_generation_model": {
+                                        "anyOf": [
+                                            {
+                                                "enum": [
+                                                    "dall-e-2",
+                                                    "dall-e-3"
+                                                ],
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Image Generation Model"
+                                    },
+                                    "tts_model": {
+                                        "anyOf": [
+                                            {
+                                                "enum": [
+                                                    "tts-1",
+                                                    "tts-1-hd"
+                                                ],
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Tts Model"
+                                    },
+                                    "whisper_model": {
+                                        "const": "whisper-1",
+                                        "default": "whisper-1",
+                                        "title": "Whisper Model"
+                                    },
+                                    "moderation_model": {
+                                        "default": "text-moderation-latest",
+                                        "enum": [
+                                            "text-moderation-latest",
+                                            "text-moderation-stable"
+                                        ],
+                                        "title": "Moderation Model",
+                                        "type": "string"
+                                    },
+                                    "base_url": {
+                                        "anyOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ],
+                                        "default": null,
+                                        "title": "Base Url"
                                     }
                                 },
                                 "required": [
-                                    "model"
+                                    "chat_model"
                                 ],
-                                "title": "BackendConfig",
+                                "title": "CustomOpenAIClientConfig",
                                 "type": "object"
-                            },
-                            "Models": {
-                                "enum": [
-                                    "gpt-3.5-turbo-1106",
-                                    "gpt-4-1106-preview",
-                                    "gpt-3.5-turbo",
-                                    "gpt-4-vision-preview",
-                                    "gpt-4",
-                                    "gpt-4-32k"
-                                ],
-                                "title": "Models",
-                                "type": "string"
                             },
                             "Profile": {
                                 "properties": {
@@ -666,7 +879,7 @@
                                 "title": "Chart Major Color"
                             },
                             "ai_backend_config": {
-                                "$ref": "#/$defs/BackendConfig"
+                                "$ref": "#/$defs/CustomOpenAIBackendConfig"
                             }
                         },
                         "required": [
@@ -691,13 +904,13 @@
                 "description": "Regex evaluator (uses the specified regular expression to extract the answer, then compares it to the reference answer).",
                 "config_schema": {
                     "$defs": {
-                        "RegexEvalToolConfig": {
+                        "RegexAnswerExtractorConfig": {
                             "properties": {
                                 "regex_rules": {
                                     "default": [
                                         "\\b([A-D])\\b"
                                     ],
-                                    "description": "Regex rules for extracting answers from the scene.",
+                                    "description": "Regex rules for extracting answers.",
                                     "items": {
                                         "type": "string"
                                     },
@@ -711,7 +924,7 @@
                                     "type": "boolean"
                                 }
                             },
-                            "title": "RegexEvalToolConfig",
+                            "title": "RegexAnswerExtractorConfig",
                             "type": "object"
                         }
                     },
@@ -723,12 +936,12 @@
                             "title": "Max Concurrency",
                             "type": "integer"
                         },
-                        "regexEvalToolConfig": {
-                            "$ref": "#/$defs/RegexEvalToolConfig"
+                        "regex_eval_tool_config": {
+                            "$ref": "#/$defs/RegexAnswerExtractorConfig"
                         }
                     },
                     "required": [
-                        "regexEvalToolConfig"
+                        "regex_eval_tool_config"
                     ],
                     "title": "RegexEvaluatorConfig",
                     "type": "object"
@@ -784,7 +997,7 @@
         ]
     },
     "leaf_version": "0.5.0",
-    "last_update": "2024-02-08-07-20-26",
+    "last_update": "2024-02-21-10-07-29",
     "id": "mmlu_1554aa26",
     "created_at": "unknown"
 }
