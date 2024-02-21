@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type
 
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
 from leaf_playground.data.media import Text
 from leaf_playground.data.message import Message
-from leaf_playground.eval_tools.general_open import GeneralOpenEvalToolConfig, GeneralOpenEvalTool
+from leaf_eval_tools.oai_eval_worker import OaiEvalWorker, OaiEvalWorkerConfig
 from pydantic import Field
 
 from ..scene_definition import PlayerDescription, SCENE_DEFINITION, ModeratorInitGameSummary, PlayerPrediction
@@ -98,15 +98,19 @@ PROMPT_TEMPLATE = {
 
 class AdvanceEvaluatorConfig(MetricEvaluatorConfig):
     non_ignored_message_type: Optional[List[Type[Message]]] = Field(default=[ModeratorInitGameSummary], exclude=True)
-    openEvalConfig: GeneralOpenEvalToolConfig = Field(...)
+    oai_open_eval_tool_config: OaiEvalWorkerConfig = Field(...)
 
 
-class EvalTool(GeneralOpenEvalTool):
+class EvalTool(OaiEvalWorker):
+    config_obj = OaiEvalWorkerConfig
+    config: config_obj
+
     _role_info: dict
 
-    def __init__(self, config: GeneralOpenEvalToolConfig):
+    def __init__(self, config: config_obj, activated_metrics: List[str]):
         super().__init__(config)
         self._role_info = {}
+        self.activated_metrics = activated_metrics
 
     @property
     def role_info(self):
@@ -126,20 +130,15 @@ class AdvanceEvaluator(
     config: config_cls
 
     @staticmethod
-    def _init_evaluator(
+    def _init_eval_tools(
         config: MetricEvaluatorConfig,
         record_metrics: List[_MetricName],
         compare_metrics: List[_MetricName]
-    ) -> Any:
+    ) -> List[EvalTool]:
         if isinstance(config, AdvanceEvaluatorConfig):
-            open_eval_tool: EvalTool = EvalTool.from_config(
-                config.openEvalConfig
-            )
-            open_eval_tool.set_activated_metrics(record_metrics)
-            open_eval_tool.set_max_tokens(512)
-            open_eval_tool.set_temperature(0.1)
+            open_eval_tool: EvalTool = EvalTool(config.oai_open_eval_tool_config, record_metrics)
 
-            return open_eval_tool
+            return [open_eval_tool]
         else:
             raise ValueError(f"Invalid config type {type(config)}")
 
@@ -161,8 +160,13 @@ class AdvanceEvaluator(
 
     @staticmethod
     async def _record(
-        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+        response: Message,
+        references: Optional[List[Message]],
+        ground_truth: Optional[Text],
+        eval_tools: List[EvalTool],
+        **kwargs,
     ) -> Dict[_MetricName, RecordOutput]:
+        eval_tool: EvalTool = eval_tools[0]
         result = {}
         if isinstance(response, ModeratorInitGameSummary):
             summary = response
@@ -173,28 +177,29 @@ class AdvanceEvaluator(
                         "role": role,
                         "key": summary.keys[role]
                     }
-            evaluator.role_info = role_info
+            eval_tool.role_info = role_info
 
         if isinstance(response, PlayerDescription) or isinstance(response, PlayerPrediction):
             try:
                 answer = response
                 value_dict = {
-                    "role_info": AdvanceEvaluator._role_info_to_str(evaluator.role_info),
+                    "role_info": AdvanceEvaluator._role_info_to_str(eval_tool.role_info),
                     "history": AdvanceEvaluator._reference_to_history_str(references),
                     "name": answer.sender_name,
                     "answer": answer.content.text
                 }
 
                 for metric in SUPPORT_METRICS:
-                    if metric.belonged_chain not in evaluator.activated_metrics or not metric.belonged_chain.startswith(
+                    if metric.belonged_chain not in eval_tool.activated_metrics or not metric.belonged_chain.startswith(
                         kwargs["action_belonged_chain"]
                     ):
                         continue
 
-                    value = await evaluator.evaluate(
-                        system_template=SYSTEM_TEMPLATE_DICT[metric.name],
+                    value = await eval_tool(
                         prompt_template=PROMPT_TEMPLATE[metric.name],
-                        value_dict=value_dict
+                        value_dict=value_dict,
+                        system_template=SYSTEM_TEMPLATE_DICT[metric.name],
+                        system_value_dict=value_dict,
                     )
                     score = value.split("Score: ")[-1]
                     reason = value.split("Score: ")[0]
@@ -216,7 +221,11 @@ class AdvanceEvaluator(
 
     @staticmethod
     async def _compare(
-        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+        response: Message,
+        references: Optional[List[Message]],
+        ground_truth: Optional[Text],
+        eval_tools: List[EvalTool],
+        **kwargs,
     ) -> Dict[_MetricName, CompareOutput]:
         return {}
 

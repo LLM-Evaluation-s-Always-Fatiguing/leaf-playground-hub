@@ -1,8 +1,7 @@
 import base64
-from typing import List, Literal
+from typing import List, Literal, Union, Type
 
-import openai
-from leaf_playground.ai_backend.openai import OpenAIBackendConfig
+from leaf_ai_backends.openai import OpenAIBackendConfig, OpenAIBackend, OpenAIClientConfig, AzureOpenAIClientConfig
 from leaf_playground.data.media import Text
 from leaf_playground.data.profile import Profile
 from leaf_playground.utils.import_util import DynamicObject
@@ -17,22 +16,32 @@ def encode_local_image(image_path: str):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-ChatModels = Literal[
-    "gpt-4-1106-preview",
-    "gpt-4-vision-preview",
-]
+class CustomOpenAIClientConfig(OpenAIClientConfig):
+    chat_model: Literal[
+        "gpt-4-0125-preview",
+        "gpt-4-1106-preview",
+        "gpt-4-0613",
+        "gpt-4-32k-0613",
+    ] = Field(default=...)
+    vision_model: Literal["gpt-4-1106-vision-preview"] = Field(default="gpt-4-1106-vision-preview")
 
 
-class BackendConfig(OpenAIBackendConfig):
-    model: ChatModels = Field(default=...)
+class CustomAzureOpenAIClientConfig(AzureOpenAIClientConfig):
+    chat_model: str = Field(default=...)
+    vision_model: str = Field(default=...)
+    whisper_model: str = Field(default=...)
+
+
+class CustomOpenAIBackendConfig(OpenAIBackendConfig):
+    client_config: Union[
+        CustomOpenAIClientConfig,
+        CustomAzureOpenAIClientConfig,
+    ] = Field(default=..., union_mode="smart")
 
 
 class OpenAIAdvancePlayerConfig(BaseAIPlayerConfig):
-    ai_backend_config: BackendConfig = Field(default=...)
-    ai_backend_obj: DynamicObject = Field(
-        default=DynamicObject(obj="OpenAIBackend", module="leaf_playground.ai_backend.openai"),
-        exclude=True
-    )
+    ai_backend_config: CustomOpenAIBackendConfig = Field(default=...)
+    ai_backend_cls: Type[OpenAIBackend] = Field(default=OpenAIBackend, exclude=True)
 
 
 class OpenAIAdvancePlayer(
@@ -45,11 +54,7 @@ class OpenAIAdvancePlayer(
     def __init__(self, config: config_cls):
         super().__init__(config=config)
 
-        self.language_model = self.config.ai_backend_config.model
-        self.vision_model = "gpt-4-vision-preview"
-        self.audio_model = "whisper-1"
-
-        self.client: openai.AsyncOpenAI = self.backend.async_client
+        self.client = self.backend.async_client
 
         self.key_transcript = ""
 
@@ -104,7 +109,7 @@ class OpenAIAdvancePlayer(
     async def _respond(self, history: List[MessageTypes], mode: Literal['description', 'prediction', 'vote']) -> str:
         resp = await self.client.chat.completions.create(
             messages=self._prepare_chat_message(history, mode),
-            model=self.language_model,
+            model=self.config.ai_backend_config.chat_model,
             max_tokens=256,
             temperature=0.9
         )
@@ -120,7 +125,7 @@ class OpenAIAdvancePlayer(
         elif key_modality == KeyModalities.IMAGE:
             image_data = encode_local_image(key_assignment.key.url)
             response = await self.client.chat.completions.create(
-                model=self.vision_model,
+                model=self.config.ai_backend_config.vision_model,
                 messages=[
                     {
                         "role": "user",
