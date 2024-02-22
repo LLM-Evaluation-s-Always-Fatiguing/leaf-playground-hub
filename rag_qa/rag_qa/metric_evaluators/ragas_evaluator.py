@@ -3,6 +3,7 @@ from typing import Any, Dict, Literal, List, Optional, Union
 from datasets import Dataset, Features, Value, Sequence
 from ragas import evaluate
 
+from leaf_eval_tools.ragas_eval_worker import RagasEvalWorker, RagasEvalWorkerConfig
 from leaf_playground.core.workers import MetricEvaluatorConfig, MetricEvaluator
 from leaf_playground.core.workers.evaluator import _MetricName, CompareOutput, RecordOutput
 from leaf_playground.data.media import Json, Text
@@ -19,16 +20,6 @@ from ragas.metrics import (
     context_relevancy,
     faithfulness
 )
-
-MetricType = Literal[
-    "answer_correctness",
-    "answer_relevancy",
-    "answer_similarity",
-    "context_precision",
-    "context_recall",
-    "context_relevancy",
-    "faithfulness"
-]
 
 ragas_metrics_map = {
     "answer_correctness": answer_correctness,
@@ -56,25 +47,23 @@ class RagasEvaluator(
     config: config_cls
 
     @staticmethod
-    def _init_evaluator(
-            config: MetricEvaluatorConfig,
-            record_metrics: List[_MetricName],
-            compare_metrics: List[_MetricName]
-    ) -> Any:
-        ragas_metrics = [ragas_metrics_map[metric_name.split('.')[-1]] for metric_name in
-                         record_metrics]  # handle the metric name like : "examinee.answer_question.answer_correctness"
-
-        def ragas_evaluate(dataset: Dataset):
-            return evaluate(dataset, metrics=ragas_metrics)
-
-        return ragas_evaluate
+    def _init_eval_tools(
+        config: MetricEvaluatorConfig,
+        record_metrics: List[_MetricName],
+        compare_metrics: List[_MetricName]
+    ) -> List[RagasEvalWorker]:
+        eval_tool = RagasEvalWorker(
+            config=RagasEvalWorkerConfig(),
+            activated_metrics=[ragas_metrics_map[metric_name.split('.')[-1]] for metric_name in record_metrics]
+        )
+        return [eval_tool]
 
     @staticmethod
     async def _record(
         response: Message,
         references: Optional[List[Message]],
         ground_truth: Optional[Union[Json, Text]],
-        evaluator: Any,
+        eval_tools: List[RagasEvalWorker],
         **kwargs
     ) -> Dict[_MetricName, RecordOutput]:
         result = {}
@@ -115,7 +104,7 @@ class RagasEvaluator(
             dataset = Dataset.from_generator(gen, features=features)
 
             try:
-                output = evaluator(dataset)
+                output = eval_tools[0](dataset)
             except Exception as e:
                 print(f"Ragas evaluate error: {e}")
                 output = {}
@@ -133,7 +122,7 @@ class RagasEvaluator(
         response: Message,
         references: Optional[List[Message]],
         ground_truth: Optional[Union[Json, Text]],
-        evaluator: Any,
+        eval_tools: List[RagasEvalWorker],
         **kwargs
     ) -> Dict[_MetricName, CompareOutput]:
         return {}

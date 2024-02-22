@@ -25,7 +25,7 @@ class SimpleEvaluator(
     config: config_cls
 
     @staticmethod
-    def _init_evaluator(
+    def _init_eval_tools(
         config: MetricEvaluatorConfig,
         record_metrics: List[_MetricName],
         compare_metrics: List[_MetricName]
@@ -34,7 +34,11 @@ class SimpleEvaluator(
 
     @staticmethod
     async def _record(
-        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+        response: Message,
+        references: Optional[List[Message]],
+        ground_truth: Optional[Text],
+        eval_tools: List[Any],
+        **kwargs,
     ) -> Dict[_MetricName, RecordOutput]:
         result = {}
         if isinstance(response, ExamineeAnswer) and ground_truth:
@@ -52,7 +56,11 @@ class SimpleEvaluator(
 
     @staticmethod
     async def _compare(
-        response: Message, references: Optional[List[Message]], ground_truth: Optional[Text], evaluator: Any, **kwargs
+        response: Message,
+        references: Optional[List[Message]],
+        ground_truth: Optional[Text],
+        eval_tools: List[Any],
+        **kwargs,
     ) -> Dict[_MetricName, CompareOutput]:
         return {}
 

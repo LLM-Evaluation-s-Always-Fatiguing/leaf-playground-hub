@@ -1,5 +1,8 @@
-from enum import Enum
+from typing import Literal, Type, Union
 
+from leaf_ai_backends.openai import OpenAIBackend, OpenAIBackendConfig, OpenAIClientConfig, AzureOpenAIClientConfig
+from leaf_playground.data.media import Text
+from leaf_playground.data.profile import Profile
 from openai import AsyncOpenAI
 from openai.types.chat.chat_completion_message_param import (
     ChatCompletionSystemMessageParam,
@@ -7,42 +10,33 @@ from openai.types.chat.chat_completion_message_param import (
 )
 from pydantic import Field
 
-from leaf_playground.ai_backend.openai import OpenAIBackendConfig
-from leaf_playground.data.media import Text
-from leaf_playground.data.profile import Profile
-from leaf_playground.utils.import_util import DynamicObject
-
 from .base_examinee import (
     AIBaseExaminee,
     AIBaseExamineeConfig
 )
 from ..scene_definition import ExamineeAnswer, ExaminerSample
 
-MODELS = Enum(
-    "Models",
-    {
-        m: m for m in [
+
+class CustomOpenAIClientConfig(OpenAIClientConfig):
+    chat_model: Literal[
+        Literal[
+            "gpt-3.5-turbo-0125",
             "gpt-3.5-turbo-1106",
+            "gpt-4-0125-preview",
             "gpt-4-1106-preview",
-            "gpt-3.5-turbo",
-            "gpt-4-vision-preview",
-            "gpt-4",
-            "gpt-4-32k",
+            "gpt-4-0613",
+            "gpt-4-32k-0613",
         ]
-    }
-)
+    ] = Field(default=...)
 
 
-class BackendConfig(OpenAIBackendConfig):
-    model: MODELS = Field(default=...)
+class CustomOpenAIBackendConfig(OpenAIBackendConfig):
+    client_config: Union[CustomOpenAIClientConfig, AzureOpenAIClientConfig] = Field(default=..., union_mode="smart")
 
 
 class OpenAIBasicExamineeConfig(AIBaseExamineeConfig):
-    ai_backend_config: BackendConfig = Field(default=...)
-    ai_backend_obj: DynamicObject = Field(
-        default=DynamicObject(obj="OpenAIBackend", module="leaf_playground.ai_backend.openai"),
-        exclude=True
-    )
+    ai_backend_config: CustomOpenAIBackendConfig = Field(default=...)
+    ai_backend_cls: Type[OpenAIBackend] = Field(default=OpenAIBackend, exclude=True)
 
 
 class OpenAIBasicExaminee(AIBaseExaminee, cls_description="Examinee agent using OpenAI API to answer questions"):
@@ -54,7 +48,7 @@ class OpenAIBasicExaminee(AIBaseExaminee, cls_description="Examinee agent using 
 
     async def answer(self, sample: ExaminerSample, examiner: Profile) -> ExamineeAnswer:
         client: AsyncOpenAI = self.backend.async_client
-        model = self.config.ai_backend_config.model.value
+        model = self.config.ai_backend_config.chat_model
 
         system_msg = (
             f"Your name is {self.name}, an {self.profile.role.name}, {self.profile.role.description}. "

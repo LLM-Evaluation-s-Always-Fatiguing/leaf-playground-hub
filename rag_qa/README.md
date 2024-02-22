@@ -30,8 +30,6 @@ Make sure you have all the additional required packages listed below installed i
 
 ```txt
 # requirements.txt
-datasets
-ragas
 ```
 
 You can copy above dependencies to a `requirements.txt` file and run `pip install -r requirements.txt` to install those dependencies.
