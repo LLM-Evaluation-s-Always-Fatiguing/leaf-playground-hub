@@ -1,6 +1,6 @@
 FROM python:bullseye
 
-RUN pip install leaf-playground==0.5.0
+RUN pip install leaf-playground==0.6.0
 
 WORKDIR /app
 
