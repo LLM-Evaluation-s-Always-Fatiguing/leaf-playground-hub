@@ -103,7 +103,7 @@ class WhoIsTheSpyScene(Scene, scene_definition=SCENE_DEFINITION, log_body_class=
         async def player_predict_role(player_: Player) -> PlayerPrediction:
             history = self.message_pool.get_messages(player_.profile)
             try:
-                prediction = await player_.predict_role(history, self.moderator.profile)
+                prediction = await player_.predict_role(history, self.moderator.profile, [p.name for p in self.players])
             except:
                 if self.config.debug_mode:
                     raise

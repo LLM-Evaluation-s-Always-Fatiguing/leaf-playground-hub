@@ -158,7 +158,7 @@ class OpenAIAdvancePlayer(
             content=Text(text=description, display_text=description)
         )
 
-    async def predict_role(self, history: List[MessageTypes], moderator: Profile) -> PlayerPrediction:
+    async def predict_role(self, history: List[MessageTypes], moderator: Profile, player_names: List[str]) -> PlayerPrediction:
         prediction = await self._respond(history, 'prediction')
         return PlayerPrediction(
             sender=self.profile,

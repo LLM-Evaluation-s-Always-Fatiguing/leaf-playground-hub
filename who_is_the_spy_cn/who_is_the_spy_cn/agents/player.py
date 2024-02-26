@@ -35,7 +35,7 @@ class BaseAIPlayer(
         pass
 
     @abstractmethod
-    async def predict_role(self, history: List[MessageTypes], moderator: Profile) -> PlayerPrediction:
+    async def predict_role(self, history: List[MessageTypes], moderator: Profile, player_names: List[str]) -> PlayerPrediction:
         pass
 
     @abstractmethod

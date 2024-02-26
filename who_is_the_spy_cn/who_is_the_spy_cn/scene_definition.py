@@ -188,9 +188,30 @@ class ModeratorWarning(TextMessage):
 class PlayerDescription(TextMessage):
     msg_type: Literal["PlayerDescription"] = Field(default="PlayerDescription")
 
+    @staticmethod
+    def generate_data_schema() -> dict:
+
+        DynamicUserModel = create_model(
+            "描述你的关键词",
+            description=(str, Field(..., description="根据游戏规则，对你的关键词进行描述"))
+        )
+
+        return DynamicUserModel.model_json_schema()
+
 
 class PlayerPrediction(TextMessage):
     msg_type: Literal["PlayerPrediction"] = Field(default="PlayerPrediction")
+
+    @staticmethod
+    def generate_data_schema(player_names: List[str]) -> dict:
+        CurrentPlayers = Literal[tuple(player_names)]
+
+        DynamicUserModel = create_model(
+            "预测卧底",
+            maybe_spy_list=(List[CurrentPlayers], Field(..., description="你怀疑可能是卧底的玩家。可以多选"))
+        )
+
+        return DynamicUserModel.model_json_schema()
 
     def get_prediction(self, player_names: List[str], has_blank: bool) -> Dict[PlayerRoles, Set[str]]:
         def retrieve_names(symbol: str) -> Set[str]:
@@ -468,6 +489,10 @@ SCENE_DEFINITION = SceneDefinition(
                             ActionSignatureParameterDefinition(
                                 name="moderator",
                                 annotation=Profile
+                            ),
+                            ActionSignatureParameterDefinition(
+                                name="player_names",
+                                annotation=List[str]
                             )
                         ],
                         return_annotation=PlayerPrediction
